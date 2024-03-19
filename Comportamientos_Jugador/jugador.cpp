@@ -247,7 +247,7 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 				break;
 		}
 	}else {
-		switch (st.brujula){
+		switch (st.brujula){ // arreglar como en el de arriba, copiar y pegarS
 				case norte:
 					matriz[st.fil - 1][st.col - 1] = sensor.terreno[1]; 
 					matriz[st.fil - 1][st.col] = sensor.terreno[2];
