@@ -25,7 +25,7 @@ class ComportamientoJugador : public Comportamiento{
 
     Action think(Sensores sensores);
     int interact(Action accion, int valor);
-    void PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector <vector< unsigned char> > &matriz);
+    void PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &current_state, vector <vector< unsigned char> > &mapaResulta, Orientacion pos, Sensores sensor);
   private:
   // Declarar aquí las variables de estado
   state current_state;

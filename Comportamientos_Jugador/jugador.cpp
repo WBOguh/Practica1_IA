@@ -79,7 +79,7 @@ if (sensores.terreno[0]=='G' and !bien_situado){
 	bien_situado = true;
 }
 if (bien_situado){
-	PonerTerrenoMatriz(sensores.terreno, current_state, mapaResultado);
+	PonerTerrenoMatriz(sensores.terreno, current_state, mapaResultado, current_state.brujula, sensores);
 	}
 if (sensores.terreno[2] == 'T' or sensores.terreno[2] == 'S' or sensores.terreno[2] == 'G' and sensores.agentes[2] == '_'){
 	accion = actWALK;
@@ -94,15 +94,276 @@ if (sensores.terreno[2] == 'T' or sensores.terreno[2] == 'S' or sensores.terreno
 last_action = accion;	
 	return accion;
 }
-void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector <vector< unsigned char> > &matriz){
+void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector <vector< unsigned char> > &matriz, Orientacion pos, Sensores sensor){
     if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size()) {
         cout << "Error: Índices fuera de los límites de la matriz." << endl;
         return;
     }
     matriz[st.fil][st.col] = terreno[0];
+	if (sensor.nivel != 3){
+		switch (st.brujula){
+				case norte:
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[1]; 
+					matriz[st.fil - 1][st.col] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil - 2][st.col - 1] = sensor.terreno[5];
+					matriz[st.fil - 2][st.col] = sensor.terreno[6];
+					matriz[st.fil - 2][st.col + 1] = sensor.terreno[7];
+					matriz[current_state.fil - 2][current_state.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil - 3][st.col - 2] = sensor.terreno[10];
+					matriz[st.fil - 3][st.col - 1] = sensor.terreno[11];
+					matriz[st.fil - 3][st.col] = sensor.terreno[12];
+					matriz[st.fil - 3][st.col + 1] = sensor.terreno[13];
+					matriz[st.fil - 3][st.col + 2] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case noreste:
+					matriz[st.fil - 1][st.col] = sensor.terreno[1];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[5];
+					matriz[st.fil - 2][st.col + 2] = sensor.terreno[6];
+					matriz[st.fil - 1][st.col + 2] = sensor.terreno[7];
+					matriz[st.fil][st.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col] = sensor.terreno[9];
+					matriz[st.fil - 3][st.col + 1] = sensor.terreno[10];
+					matriz[st.fil - 3][st.col + 2] = sensor.terreno[11];
+					matriz[st.fil - 3][st.col + 3] = sensor.terreno[12];
+					matriz[st.fil - 2][st.col + 3] = sensor.terreno[13];
+					matriz[st.fil - 2][st.col + 3] = sensor.terreno[14];
+					matriz[st.fil][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case este:
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col + 2] = sensor.terreno[5];
+					matriz[st.fil][st.col + 2] = sensor.terreno[6];
+					matriz[st.fil + 1][st.col + 2] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil - 2][st.col + 3] = sensor.terreno[10];
+					matriz[st.fil - 1][st.col + 3] = sensor.terreno[11];
+					matriz[st.fil][st.col + 3] = sensor.terreno[12];
+					matriz[st.fil + 1][st.col + 3] = sensor.terreno[13];
+					matriz[st.fil + 2][st.col + 3] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case sureste:
+					matriz[st.fil][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil+ 1][st.col] = sensor.terreno[3];
+					matriz[st.fil][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil + 1][st.col + 2] = sensor.terreno[5];
+					matriz[st.fil + 2][st.col + 2] = sensor.terreno[6];
+					matriz[st.fil + 2][st.col + 1] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col] = sensor.terreno[8];
+					matriz[st.fil][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil + 1][st.col + 3] = sensor.terreno[10];
+					matriz[st.fil + 2][st.col + 3] = sensor.terreno[11];
+					matriz[st.fil + 3][st.col + 3] = sensor.terreno[12];
+					matriz[st.fil + 3][st.col + 2] = sensor.terreno[13];
+					matriz[st.fil + 3][st.col + 1] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col] = sensor.terreno[15];
+					break;
+
+				case sur: 
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col] = sensor.terreno[2];
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil + 2][st.col + 1] = sensor.terreno[5];
+					matriz[st.fil + 2][st.col] = sensor.terreno[6];
+					matriz[st.fil + 2][st.col - 1] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil + 3][st.col + 2] = sensor.terreno[10];
+					matriz[st.fil + 3][st.col + 1] = sensor.terreno[11];
+					matriz[st.fil + 3][st.col] = sensor.terreno[12];
+					matriz[st.fil + 3][st.col - 1] = sensor.terreno[13];
+					matriz[st.fil + 3][st.col - 2] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case suroeste:
+					matriz[st.fil + 1][st.col] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col] = sensor.terreno[4];
+					matriz[st.fil + 2][st.col - 1] = sensor.terreno[5];
+					matriz[st.fil + 2][st.col - 2] = sensor.terreno[6];
+					matriz[st.fil + 1][st.col - 2] = sensor.terreno[7];
+					matriz[st.fil][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col] = sensor.terreno[9];
+					matriz[st.fil + 3][st.col - 1] = sensor.terreno[10];
+					matriz[st.fil + 3][st.col - 2] = sensor.terreno[11];
+					matriz[st.fil + 3][st.col - 3] = sensor.terreno[12];
+					matriz[st.fil + 2][st.col - 3] = sensor.terreno[13];
+					matriz[st.fil + 1][st.col - 3] = sensor.terreno[14];
+					matriz[st.fil][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case oeste:
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[1];
+					matriz[st.fil][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil + 1][st.col - 2] = sensor.terreno[5];
+					matriz[st.fil][st.col - 2] = sensor.terreno[6];
+					matriz[st.fil - 1][st.col - 2] = sensor.terreno[7];
+					matriz[st.fil - 2][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil + 2][st.col - 3] = sensor.terreno[10];
+					matriz[st.fil + 1][st.col - 3] = sensor.terreno[11];
+					matriz[st.fil][st.col - 3] = sensor.terreno[12];
+					matriz[st.fil - 1][st.col - 3] = sensor.terreno[13];
+					matriz[st.fil - 2][st.col - 3] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case noroeste:
+					matriz[st.fil][st.col - 1] = sensor.terreno[1];
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col] = sensor.terreno[3];
+					matriz[st.fil][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col - 2] = sensor.terreno[5];
+					matriz[st.fil - 2][st.col - 2] = sensor.terreno[6];
+					matriz[st.fil - 2][st.col - 1] = sensor.terreno[7];
+					matriz[st.fil - 2][st.col] = sensor.terreno[8];
+					matriz[st.fil][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil - 1][st.col - 3] = sensor.terreno[10];
+					matriz[st.fil - 2][st.col - 3] = sensor.terreno[11];
+					matriz[st.fil - 3][st.col - 3] = sensor.terreno[12];
+					matriz[st.fil - 3][st.col - 2] = sensor.terreno[13];
+					matriz[st.fil - 3][st.col - 1] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col] = sensor.terreno[15];
+					break;
+		}
+	}else {
+		switch (st.brujula){
+				case norte:
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[1]; 
+					matriz[st.fil - 1][st.col] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil - 2][st.col - 1] = sensor.terreno[5];
+					matriz[st.fil - 2][st.col + 1] = sensor.terreno[7];
+					matriz[st.fil - 2][st.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil - 3][st.col - 2] = sensor.terreno[10];
+					matriz[st.fil - 3][st.col + 2] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case noreste:
+					matriz[st.fil - 1][st.col] = sensor.terreno[1];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[5];
+					matriz[st.fil - 1][st.col + 2] = sensor.terreno[7];
+					matriz[st.fil][st.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col] = sensor.terreno[9];
+					matriz[st.fil - 3][st.col + 1] = sensor.terreno[10];
+					matriz[st.fil - 2][st.col + 3] = sensor.terreno[14];
+					matriz[st.fil][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case este:
+					matriz[st.fil - 1][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[3];
+					matriz[st.fil - 2][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col + 2] = sensor.terreno[5];
+					matriz[st.fil + 1][st.col + 2] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col + 2] = sensor.terreno[8];
+					matriz[st.fil - 3][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil - 2][st.col + 3] = sensor.terreno[10];
+					matriz[st.fil + 2][st.col + 3] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col + 3] = sensor.terreno[15];
+					break;
+
+				case sureste:
+					matriz[st.fil][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[2];
+					matriz[st.fil+ 1][st.col] = sensor.terreno[3];
+					matriz[st.fil][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil + 1][st.col + 2] = sensor.terreno[5];
+					matriz[st.fil + 2][st.col + 1] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col] = sensor.terreno[8];
+					matriz[st.fil][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil + 1][st.col + 3] = sensor.terreno[10];
+					matriz[st.fil + 3][st.col + 1] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col] = sensor.terreno[15];
+					break;
+
+				case sur: 
+					matriz[st.fil + 1][st.col + 1] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col] = sensor.terreno[2];
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col + 2] = sensor.terreno[4];
+					matriz[st.fil + 2][st.col + 1] = sensor.terreno[5];
+					matriz[st.fil + 2][st.col - 1] = sensor.terreno[7];
+					matriz[st.fil + 2][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col + 3] = sensor.terreno[9];
+					matriz[st.fil + 3][st.col + 2] = sensor.terreno[10];
+					matriz[st.fil + 3][st.col - 2] = sensor.terreno[14];
+					matriz[st.fil + 3][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case suroeste:
+					matriz[st.fil + 1][st.col] = sensor.terreno[1];
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col] = sensor.terreno[4];
+					matriz[st.fil + 2][st.col - 1] = sensor.terreno[5];
+					matriz[st.fil + 1][st.col - 2] = sensor.terreno[7];
+					matriz[st.fil][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col] = sensor.terreno[9];
+					matriz[st.fil + 3][st.col - 1] = sensor.terreno[10];
+					matriz[st.fil + 1][st.col - 3] = sensor.terreno[14];
+					matriz[st.fil][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case oeste:
+					matriz[st.fil + 1][st.col - 1] = sensor.terreno[1];
+					matriz[st.fil][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[3];
+					matriz[st.fil + 2][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil + 1][st.col - 2] = sensor.terreno[5];
+					matriz[st.fil - 1][st.col - 2] = sensor.terreno[7];
+					matriz[st.fil - 2][st.col - 2] = sensor.terreno[8];
+					matriz[st.fil + 3][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil + 2][st.col - 3] = sensor.terreno[10];
+					matriz[st.fil - 2][st.col - 3] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col - 3] = sensor.terreno[15];
+					break;
+
+				case noroeste:
+					matriz[st.fil][st.col - 1] = sensor.terreno[1];
+					matriz[st.fil - 1][st.col - 1] = sensor.terreno[2];
+					matriz[st.fil - 1][st.col] = sensor.terreno[3];
+					matriz[st.fil][st.col - 2] = sensor.terreno[4];
+					matriz[st.fil - 1][st.col - 2] = sensor.terreno[5];
+					matriz[st.fil - 2][st.col - 1] = sensor.terreno[7];
+					matriz[st.fil - 2][st.col] = sensor.terreno[8];
+					matriz[st.fil][st.col - 3] = sensor.terreno[9];
+					matriz[st.fil - 1][st.col - 3] = sensor.terreno[10];
+					matriz[st.fil - 3][st.col - 1] = sensor.terreno[14];
+					matriz[st.fil - 3][st.col] = sensor.terreno[15];
+					break;
+	}
 }
-int ComportamientoJugador::interact(Action accion, int valor)
-{
-	return false;
 }
 
+
+int ComportamientoJugador::interact(Action accion, int valor){
+	return false;
+}
