@@ -247,119 +247,119 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 				break;
 		}
 	}else {
-		switch (st.brujula){ // arreglar como en el de arriba, copiar y pegarS
+		switch (st.brujula){
 				case norte:
-					matriz[st.fil - 1][st.col - 1] = sensor.terreno[1]; 
-					matriz[st.fil - 1][st.col] = sensor.terreno[2];
-					matriz[st.fil - 1][st.col + 1] = sensor.terreno[3];
-					matriz[st.fil - 2][st.col - 2] = sensor.terreno[4];
-					matriz[st.fil - 2][st.col - 1] = sensor.terreno[5];
-					matriz[st.fil - 2][st.col + 1] = sensor.terreno[7];
-					matriz[st.fil - 2][st.col + 2] = sensor.terreno[8];
-					matriz[st.fil - 3][st.col - 3] = sensor.terreno[9];
-					matriz[st.fil - 3][st.col - 2] = sensor.terreno[10];
-					matriz[st.fil - 3][st.col + 2] = sensor.terreno[14];
-					matriz[st.fil - 3][st.col + 3] = sensor.terreno[15];
-					break;
+					matriz[st.fil-1][st.col-1] = terreno[1];
+					matriz[st.fil-1][st.col] = terreno[2];
+					matriz[st.fil-1][st.col+1] = terreno[3];
+					matriz[st.fil-2][st.col-2] = terreno[4];
+					matriz[st.fil-2][st.col-1] = terreno[5];
+					matriz[st.fil-2][st.col+1] = terreno[7];
+					matriz[st.fil-2][st.col+2] = terreno[8];
+					matriz[st.fil-3][st.col-3] = terreno[9];
+					matriz[st.fil-3][st.col-2] = terreno[10];
+					matriz[st.fil-3][st.col+2] = terreno[14];
+					matriz[st.fil-3][st.col+3] = terreno[15];
+				break;
 
 				case noreste:
-					matriz[st.fil - 1][st.col] = sensor.terreno[1];
-					matriz[st.fil - 1][st.col + 1] = sensor.terreno[2];
-					matriz[st.fil][st.col + 1] = sensor.terreno[3];
-					matriz[st.fil - 2][st.col] = sensor.terreno[4];
-					matriz[st.fil - 1][st.col + 1] = sensor.terreno[5];
-					matriz[st.fil - 1][st.col + 2] = sensor.terreno[7];
-					matriz[st.fil][st.col + 2] = sensor.terreno[8];
-					matriz[st.fil - 3][st.col] = sensor.terreno[9];
-					matriz[st.fil - 3][st.col + 1] = sensor.terreno[10];
-					matriz[st.fil - 2][st.col + 3] = sensor.terreno[14];
-					matriz[st.fil][st.col + 3] = sensor.terreno[15];
-					break;
+					matriz[st.fil-1][st.col] = terreno[1];
+					matriz[st.fil-1][st.col+1] = terreno[2];
+					matriz[st.fil][st.col+1] = terreno[3];
+					matriz[st.fil-2][st.col] = terreno[4];
+					matriz[st.fil-2][st.col+1] = terreno[5];
+					matriz[st.fil-1][st.col+2] = terreno[7];
+					matriz[st.fil][st.col+2] = terreno[8];
+					matriz[st.fil-3][st.col] = terreno[9];
+					matriz[st.fil-3][st.col+1] = terreno[10];
+					matriz[st.fil-1][st.col+3] = terreno[14];
+					matriz[st.fil][st.col+3] = terreno[15];
+				break;
 
 				case este:
-					matriz[st.fil - 1][st.col + 1] = sensor.terreno[1];
-					matriz[st.fil][st.col + 1] = sensor.terreno[2];
-					matriz[st.fil + 1][st.col + 1] = sensor.terreno[3];
-					matriz[st.fil - 2][st.col + 2] = sensor.terreno[4];
-					matriz[st.fil - 1][st.col + 2] = sensor.terreno[5];
-					matriz[st.fil + 1][st.col + 2] = sensor.terreno[7];
-					matriz[st.fil + 2][st.col + 2] = sensor.terreno[8];
-					matriz[st.fil - 3][st.col + 3] = sensor.terreno[9];
-					matriz[st.fil - 2][st.col + 3] = sensor.terreno[10];
-					matriz[st.fil + 2][st.col + 3] = sensor.terreno[14];
-					matriz[st.fil + 3][st.col + 3] = sensor.terreno[15];
-					break;
-
+					matriz[st.fil-1][st.col+1] = terreno[1];
+					matriz[st.fil][st.col+1] = terreno[2];
+					matriz[st.fil+1][st.col+1] = terreno[3];
+					matriz[st.fil-2][st.col+2] = terreno[4];
+					matriz[st.fil-1][st.col+2] = terreno[5];
+					matriz[st.fil+1][st.col+2] = terreno[7];
+					matriz[st.fil+2][st.col+2] = terreno[8];
+					matriz[st.fil-3][st.col+3] = terreno[9];
+					matriz[st.fil-2][st.col+3] = terreno[10];
+					matriz[st.fil+2][st.col+3] = terreno[14];
+					matriz[st.fil+3][st.col+3] = terreno[15];
+				break;
+				
 				case sureste:
-					matriz[st.fil][st.col + 1] = sensor.terreno[1];
-					matriz[st.fil + 1][st.col + 1] = sensor.terreno[2];
-					matriz[st.fil+ 1][st.col] = sensor.terreno[3];
-					matriz[st.fil][st.col + 2] = sensor.terreno[4];
-					matriz[st.fil + 1][st.col + 2] = sensor.terreno[5];
-					matriz[st.fil + 2][st.col + 1] = sensor.terreno[7];
-					matriz[st.fil + 2][st.col] = sensor.terreno[8];
-					matriz[st.fil][st.col + 3] = sensor.terreno[9];
-					matriz[st.fil + 1][st.col + 3] = sensor.terreno[10];
-					matriz[st.fil + 3][st.col + 1] = sensor.terreno[14];
-					matriz[st.fil + 3][st.col] = sensor.terreno[15];
-					break;
+					matriz[st.fil][st.col+1] = terreno[1];
+					matriz[st.fil+1][st.col+1] = terreno[2];
+					matriz[st.fil+1][st.col] = terreno[3];
+					matriz[st.fil][st.col+2] = terreno[4];
+					matriz[st.fil+1][st.col+2] = terreno[5];
+					matriz[st.fil+2][st.col+1] = terreno[7];
+					matriz[st.fil+2][st.col] = terreno[8];
+					matriz[st.fil][st.col+3] = terreno[9];
+					matriz[st.fil+1][st.col+3] = terreno[10];
+					matriz[st.fil+3][st.col+1] = terreno[14];
+					matriz[st.fil+3][st.col] = terreno[15];
+				break;
 
-				case sur: 
-					matriz[st.fil + 1][st.col + 1] = sensor.terreno[1];
-					matriz[st.fil + 1][st.col] = sensor.terreno[2];
-					matriz[st.fil + 1][st.col - 1] = sensor.terreno[3];
-					matriz[st.fil + 2][st.col + 2] = sensor.terreno[4];
-					matriz[st.fil + 2][st.col + 1] = sensor.terreno[5];
-					matriz[st.fil + 2][st.col - 1] = sensor.terreno[7];
-					matriz[st.fil + 2][st.col - 2] = sensor.terreno[8];
-					matriz[st.fil + 3][st.col + 3] = sensor.terreno[9];
-					matriz[st.fil + 3][st.col + 2] = sensor.terreno[10];
-					matriz[st.fil + 3][st.col - 2] = sensor.terreno[14];
-					matriz[st.fil + 3][st.col - 3] = sensor.terreno[15];
-					break;
+				case sur:
+					matriz[st.fil+1][st.col+1] = terreno[1];
+					matriz[st.fil+1][st.col] = terreno[2];
+					matriz[st.fil+1][st.col-1] = terreno[3];
+					matriz[st.fil+2][st.col+2] = terreno[4];
+					matriz[st.fil+2][st.col+1] = terreno[5];
+					matriz[st.fil+2][st.col-1] = terreno[7];
+					matriz[st.fil+2][st.col-2] = terreno[8];
+					matriz[st.fil+3][st.col+3] = terreno[9];
+					matriz[st.fil+3][st.col+2] = terreno[10];
+					matriz[st.fil+3][st.col-2] = terreno[14];
+					matriz[st.fil+3][st.col-3] = terreno[15];
+				break;
 
 				case suroeste:
-					matriz[st.fil + 1][st.col] = sensor.terreno[1];
-					matriz[st.fil + 1][st.col - 1] = sensor.terreno[2];
-					matriz[st.fil][st.col - 1] = sensor.terreno[3];
-					matriz[st.fil + 2][st.col] = sensor.terreno[4];
-					matriz[st.fil + 2][st.col - 1] = sensor.terreno[5];
-					matriz[st.fil + 1][st.col - 2] = sensor.terreno[7];
-					matriz[st.fil][st.col - 2] = sensor.terreno[8];
-					matriz[st.fil + 3][st.col] = sensor.terreno[9];
-					matriz[st.fil + 3][st.col - 1] = sensor.terreno[10];
-					matriz[st.fil + 1][st.col - 3] = sensor.terreno[14];
-					matriz[st.fil][st.col - 3] = sensor.terreno[15];
-					break;
+					matriz[st.fil+1][st.col] = terreno[1];
+					matriz[st.fil+1][st.col-1] = terreno[2];
+					matriz[st.fil][st.col-1] = terreno[3];
+					matriz[st.fil+2][st.col] = terreno[4];
+					matriz[st.fil+2][st.col-1] = terreno[5];
+					matriz[st.fil+1][st.col-2] = terreno[7];
+					matriz[st.fil][st.col-2] = terreno[8];
+					matriz[st.fil+3][st.col] = terreno[9];
+					matriz[st.fil+3][st.col-1] = terreno[10];
+					matriz[st.fil+1][st.col-3] = terreno[14];
+					matriz[st.fil][st.col-3] = terreno[15];
+				break;
 
 				case oeste:
-					matriz[st.fil + 1][st.col - 1] = sensor.terreno[1];
-					matriz[st.fil][st.col - 1] = sensor.terreno[2];
-					matriz[st.fil - 1][st.col - 1] = sensor.terreno[3];
-					matriz[st.fil + 2][st.col - 2] = sensor.terreno[4];
-					matriz[st.fil + 1][st.col - 2] = sensor.terreno[5];
-					matriz[st.fil - 1][st.col - 2] = sensor.terreno[7];
-					matriz[st.fil - 2][st.col - 2] = sensor.terreno[8];
-					matriz[st.fil + 3][st.col - 3] = sensor.terreno[9];
-					matriz[st.fil + 2][st.col - 3] = sensor.terreno[10];
-					matriz[st.fil - 2][st.col - 3] = sensor.terreno[14];
-					matriz[st.fil - 3][st.col - 3] = sensor.terreno[15];
-					break;
+					matriz[st.fil+1][st.col-1] = terreno[1];
+					matriz[st.fil][st.col-1] = terreno[2];
+					matriz[st.fil-1][st.col-1] = terreno[3];
+					matriz[st.fil+2][st.col-2] = terreno[4];
+					matriz[st.fil+1][st.col-2] = terreno[5];
+					matriz[st.fil-1][st.col-2] = terreno[7];
+					matriz[st.fil-2][st.col-2] = terreno[8];
+					matriz[st.fil+3][st.col-3] = terreno[9];
+					matriz[st.fil+2][st.col-3] = terreno[10];
+					matriz[st.fil-2][st.col-3] = terreno[14];
+					matriz[st.fil-3][st.col-3] = terreno[15];
+				break;
 
 				case noroeste:
-					matriz[st.fil][st.col - 1] = sensor.terreno[1];
-					matriz[st.fil - 1][st.col - 1] = sensor.terreno[2];
-					matriz[st.fil - 1][st.col] = sensor.terreno[3];
-					matriz[st.fil][st.col - 2] = sensor.terreno[4];
-					matriz[st.fil - 1][st.col - 2] = sensor.terreno[5];
-					matriz[st.fil - 2][st.col - 1] = sensor.terreno[7];
-					matriz[st.fil - 2][st.col] = sensor.terreno[8];
-					matriz[st.fil][st.col - 3] = sensor.terreno[9];
-					matriz[st.fil - 1][st.col - 3] = sensor.terreno[10];
-					matriz[st.fil - 3][st.col - 1] = sensor.terreno[14];
-					matriz[st.fil - 3][st.col] = sensor.terreno[15];
-					break;
-	}
+					matriz[st.fil][st.col-1] = terreno[1];
+					matriz[st.fil-1][st.col-1] = terreno[2];
+					matriz[st.fil-1][st.col] = terreno[3];
+					matriz[st.fil][st.col-2] = terreno[4];
+					matriz[st.fil-1][st.col-2] = terreno[5];
+					matriz[st.fil-2][st.col-1] = terreno[7];
+					matriz[st.fil-2][st.col] = terreno[8];
+					matriz[st.fil][st.col-3] = terreno[9];
+					matriz[st.fil-1][st.col-3] = terreno[10];
+					matriz[st.fil-3][st.col-1] = terreno[14];
+					matriz[st.fil-3][st.col] = terreno[15];
+				break;
+		}
 }
 }
 
