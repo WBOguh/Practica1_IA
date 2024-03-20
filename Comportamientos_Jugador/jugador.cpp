@@ -116,6 +116,7 @@ if (sensores.nivel == 0){
 if (bien_situado){
 	PonerTerrenoMatriz(sensores.terreno, current_state, mapaResultado, current_state.brujula, sensores);
 	}
+
 if (sensores.terreno[2] == 'T' or sensores.terreno[2] == 'S' or sensores.terreno[2] == 'G' and sensores.agentes[2] == '_'){
 	accion = actWALK;
 	}else if(!girar_derecha){
@@ -401,4 +402,53 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 
 int ComportamientoJugador::interact(Action accion, int valor){
 	return false;
+}
+
+int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno,state posicion){
+	int pos = -1, pos_posicion = -1, pos_recuperacion = -1, pos_bikini = -1, pos_zapatillas = -1;
+	hay_algo = false;
+	hay_casilla_posicion = false;
+	hay_casilla_recuperacion = false;
+	hay_casilla_bikini = false;
+	hay_casilla_zapatillas = false;
+
+	for (int i = 0; i < 15; ++i){
+		if (terreno[i] == 'K' and !bien_situado){
+			hay_casilla_posicion = true;
+			hay_algo = true;
+			pos_posicion = i;
+		}
+		if (terreno[i] == 'X'){
+			hay_casilla_recuperacion = true;
+			hay_algo = true;
+			pos_recuperacion = i;
+		}
+		if (terreno[i] == 'K' and !tengo_bikini){
+			hay_casilla_bikini = true;
+			hay_algo = true;
+			pos_bikini = i;
+			if (i == 0){
+				tengo_bikini = true;
+			}
+		}
+		if (terreno[i] == 'D' and !tengo_zapatilllas){
+			hay_casilla_zapatillas = true;
+			hay_algo = true;
+			pos_zapatillas = i;
+			if (i == 0){
+				tengo_zapatilllas = true;
+			}
+		}
+	}
+
+	if (hay_casilla_posicion and !bien_situado){
+		pos = pos_posicion;
+	}else if (hay_casilla_recuperacion and busco_bateria){
+		pos = pos_recuperacion;
+	}else if (hay_casilla_zapatillas and !tengo_zapatilllas){
+		pos = pos_zapatillas;
+	}else if (hay_casilla_bikini and !tengo_bikini){
+		pos = pos_bikini;
+	}
+	return pos;
 }

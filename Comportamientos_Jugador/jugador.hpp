@@ -19,6 +19,14 @@ class ComportamientoJugador : public Comportamiento{
       girar_derecha = false;
       bien_situado = false;
       primera_vez = true;
+      hay_casilla_posicion = false;
+      hay_casilla_recuperacion = false;
+      hay_casilla_zapatillas = false;
+      hay_casilla_bikini = false;
+      tengo_zapatilllas = false;
+      tengo_bikini = false;
+      hay_algo = false;
+      busco_bateria = false;
     }
 
     ComportamientoJugador(const ComportamientoJugador & comport) : Comportamiento(comport){}
@@ -35,5 +43,16 @@ class ComportamientoJugador : public Comportamiento{
   bool girar_derecha;
   bool bien_situado;
   bool primera_vez;
+  bool hay_casilla_posicion;
+  bool hay_casilla_recuperacion;
+  bool hay_casilla_zapatillas;
+  bool hay_casilla_bikini;
+  bool tengo_zapatilllas;
+  bool tengo_bikini;
+  bool hay_algo;
+  bool busco_bateria;
+
+  int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno,state posicion);
+
 };
 #endif
