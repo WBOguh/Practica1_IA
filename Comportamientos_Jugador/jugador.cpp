@@ -32,6 +32,34 @@ Action ComportamientoJugador::think(Sensores sensores)
 	cout << "\nColision: " << sensores.colision;
 	cout << "  Reset: " << sensores.reset;
 	cout << "  Vida: " << sensores.vida << endl<< endl;
+
+	
+	//Pintamos Acantilados
+	if (primera_vez){
+		for (int i = 0; i < 3; ++i){
+			for ( int j = 0; j < mapaResultado.size(); ++j)
+				mapaResultado[i][j] = 'P';
+		}
+
+		for(int j = 0; j < 3; ++j){
+			for (int i = 3; i < mapaResultado.size(); ++i){
+				mapaResultado[i][j] = 'P';
+			}
+		}
+
+		for (int i = mapaResultado.size() - 3; i < mapaResultado.size(); ++i){
+			for (int j = 0; j < mapaResultado.size(); ++j){
+				mapaResultado[i][j] = 'P';
+			}
+		}
+
+		for (int j = mapaResultado.size() - 3; j < mapaResultado.size(); ++j){
+			for (int i = 0; i < mapaResultado.size(); ++i){
+				mapaResultado[i][j] = 'P';
+			}
+		}
+		primera_vez = false;
+	}
 	
 	switch (last_action)
 	{
@@ -77,6 +105,13 @@ if (sensores.terreno[0]=='G' and !bien_situado){
 	current_state.col= sensores.posC;
 	current_state.brujula = sensores.sentido;
 	bien_situado = true;
+}
+
+if (sensores.nivel == 0){
+		current_state.fil = sensores.posF;
+		current_state.col = sensores.posC;
+		current_state.brujula = sensores.sentido;
+		bien_situado = true;
 }
 if (bien_situado){
 	PonerTerrenoMatriz(sensores.terreno, current_state, mapaResultado, current_state.brujula, sensores);
@@ -360,7 +395,7 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 					matriz[st.fil-3][st.col] = terreno[15];
 				break;
 		}
-}
+	}
 }
 
 
