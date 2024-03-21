@@ -27,6 +27,7 @@ class ComportamientoJugador : public Comportamiento{
       tengo_bikini = false;
       hay_algo = false;
       busco_bateria = false;
+      imposible = false;
     }
 
     ComportamientoJugador(const ComportamientoJugador & comport) : Comportamiento(comport){}
@@ -51,8 +52,10 @@ class ComportamientoJugador : public Comportamiento{
   bool tengo_bikini;
   bool hay_algo;
   bool busco_bateria;
+  bool imposible;
 
-  int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno,state posicion);
+  int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor);
+  Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno);
 
 };
 #endif
