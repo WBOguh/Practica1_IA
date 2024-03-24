@@ -51,106 +51,82 @@ Action ComportamientoJugador::think(Sensores sensores)
 		 << endl;
 
 	// Pintamos Acantilados
-	if (primera_vez)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < mapaResultado.size(); ++j)
-				mapaResultado[i][j] = 'P';
-		}
-
-		for (int j = 0; j < 3; ++j)
-		{
-			for (int i = 3; i < mapaResultado.size(); ++i)
-			{
-				mapaResultado[i][j] = 'P';
-			}
-		}
-
-		for (int i = mapaResultado.size() - 3; i < mapaResultado.size(); ++i)
-		{
-			for (int j = 0; j < mapaResultado.size(); ++j)
-			{
-				mapaResultado[i][j] = 'P';
-			}
-		}
-
-		for (int j = mapaResultado.size() - 3; j < mapaResultado.size(); ++j)
-		{
-			for (int i = 0; i < mapaResultado.size(); ++i)
-			{
-				mapaResultado[i][j] = 'P';
-			}
-		}
-		primera_vez = false;
-	}
+	PintarPrecicpicios(primera_vez);
 
 	switch (last_action)
 	{
+
 	case actWALK:
-		switch (current_state.brujula)
+		if (sensores.colision == false)
 		{
-		case norte:
-			current_state.fil--;
-			break;
-		case sur:
-			current_state.fil++;
-			break;
-		case este:
-			current_state.col++;
-			break;
-		case oeste:
-			current_state.col--;
-			break;
-		case noreste:
-			current_state.fil--;
-			current_state.col++;
-			break;
-		case noroeste:
-			current_state.fil--;
-			current_state.col--;
-			break;
-		case sureste:
-			current_state.fil++;
-			current_state.col++;
-			break;
-		case suroeste:
-			current_state.fil++;
-			current_state.col--;
-			break;
+			switch (current_state.brujula)
+			{
+			case norte:
+				current_state.fil--;
+				break;
+			case sur:
+				current_state.fil++;
+				break;
+			case este:
+				current_state.col++;
+				break;
+			case oeste:
+				current_state.col--;
+				break;
+			case noreste:
+				current_state.fil--;
+				current_state.col++;
+				break;
+			case noroeste:
+				current_state.fil--;
+				current_state.col--;
+				break;
+			case sureste:
+				current_state.fil++;
+				current_state.col++;
+				break;
+			case suroeste:
+				current_state.fil++;
+				current_state.col--;
+				break;
+			}
 		}
 		break;
+
 	case actRUN:
-		switch (current_state.brujula)
+		if (sensores.colision == false)
 		{
-		case norte:
-			current_state.fil -= 2;
-			break;
-		case sur:
-			current_state.fil += 2;
-			break;
-		case este:
-			current_state.col += 2;
-			break;
-		case oeste:
-			current_state.col -= 2;
-			break;
-		case noreste:
-			current_state.fil -= 2;
-			current_state.col += 2;
-			break;
-		case noroeste:
-			current_state.fil -= 2;
-			current_state.col -= 2;
-			break;
-		case sureste:
-			current_state.fil += 2;
-			current_state.col += 2;
-			break;
-		case suroeste:
-			current_state.fil += 2;
-			current_state.col -= 2;
-			break;
+			switch (current_state.brujula)
+			{
+			case norte:
+				current_state.fil -= 2;
+				break;
+			case sur:
+				current_state.fil += 2;
+				break;
+			case este:
+				current_state.col += 2;
+				break;
+			case oeste:
+				current_state.col -= 2;
+				break;
+			case noreste:
+				current_state.fil -= 2;
+				current_state.col += 2;
+				break;
+			case noroeste:
+				current_state.fil -= 2;
+				current_state.col -= 2;
+				break;
+			case sureste:
+				current_state.fil += 2;
+				current_state.col += 2;
+				break;
+			case suroeste:
+				current_state.fil += 2;
+				current_state.col -= 2;
+				break;
+			}
 		}
 		break;
 	case actTURN_SR:
@@ -170,7 +146,9 @@ Action ComportamientoJugador::think(Sensores sensores)
 		tengo_bikini = false;
 		tengo_zapatilllas = false;
 		if (sensores.nivel != 0)
+		{
 			bien_situado = false;
+		}
 	}
 
 	if (sensores.nivel == 0)
@@ -186,6 +164,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.col = sensores.posC;
 		current_state.brujula = sensores.sentido;
 		bien_situado = true;
+		cout << "Bien posicionado" << endl;
 	}
 
 	if (bien_situado)
@@ -218,6 +197,148 @@ Action ComportamientoJugador::think(Sensores sensores)
 
 	last_action = accion;
 	return accion;
+}
+
+int ComportamientoJugador::interact(Action accion, int valor)
+{
+	return false;
+}
+
+int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor)
+{
+	int pos = -1, pos_posicion = -1, pos_recuperacion = -1, pos_bikini = -1, pos_zapatillas = -1;
+	hay_algo = false;
+	hay_casilla_posicion = false;
+	hay_casilla_recuperacion = false;
+	hay_casilla_bikini = false;
+	hay_casilla_zapatillas = false;
+
+	for (int i = 0; i <= 15; ++i)
+	{
+		if (terreno[i] == 'G' and !bien_situado)
+		{
+			hay_casilla_posicion = true;
+			hay_algo = true;
+			if (pos_posicion == -1)
+				pos_posicion = i;
+			else if (pos_posicion > i)
+				pos_posicion = i;
+		}
+		if (terreno[i] == 'X')
+		{
+			hay_casilla_recuperacion = true;
+			hay_algo = true;
+			if (pos_recuperacion == -1)
+				pos_recuperacion = i;
+			else if (pos_recuperacion > i)
+				pos_recuperacion = i;
+		}
+		if (terreno[i] == 'K' and !tengo_bikini)
+		{
+			hay_casilla_bikini = true;
+			hay_algo = true;
+			if (pos_bikini == -1)
+				pos_bikini = i;
+			else if (pos_bikini > i)
+				pos_bikini = i;
+
+			if (i == 0)
+			{
+				tengo_bikini = true;
+			}
+		}
+		if (terreno[i] == 'D' and !tengo_zapatilllas)
+		{
+			hay_casilla_zapatillas = true;
+			hay_algo = true;
+			if (pos_zapatillas == -1)
+				pos_zapatillas = i;
+			else if (pos_zapatillas > i)
+				pos_recuperacion = i;
+
+			if (i == 0)
+			{
+				tengo_zapatilllas = true;
+			}
+		}
+	}
+
+	if (hay_casilla_posicion and !bien_situado)
+	{
+		pos = pos_posicion;
+	}
+	else if (hay_casilla_recuperacion and busco_bateria)
+	{
+		pos = pos_recuperacion;
+	}
+	else if (hay_casilla_zapatillas and !tengo_zapatilllas)
+	{
+		pos = pos_zapatillas;
+	}
+	else if (hay_casilla_bikini and !tengo_bikini)
+	{
+		pos = pos_bikini;
+	}
+
+	if (sensor.nivel == 3 and (pos == 6 or pos == 11 or pos == 12 or pos == 13))
+	{
+		pos = -1;
+		hay_algo = false;
+	}
+
+	return pos;
+}
+
+Action ComportamientoJugador::IrCasillaEnVista(int pos, const vector<unsigned char> &terreno)
+{
+	imposible = false;
+	Action accion;
+	if (pos == 1 or pos == 4 or pos == 9)
+		accion = actTURN_L;
+	else if (pos == 3 or pos == 8 or pos == 15)
+		accion = actTURN_SR;
+	else if (terreno[2] != 'M' or terreno[2] != 'P')
+		accion = actWALK;
+	else
+		imposible = true;
+	return accion;
+}
+
+void ComportamientoJugador::PintarPrecicpicios(bool pintar)
+{
+	if (pintar)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < mapaResultado.size(); ++j)
+				mapaResultado[i][j] = 'P';
+		}
+
+		for (int j = 0; j < 3; ++j)
+		{
+			for (int i = 3; i < mapaResultado.size(); ++i)
+			{
+				mapaResultado[i][j] = 'P';
+			}
+		}
+
+		for (int i = mapaResultado.size() - 3; i < mapaResultado.size(); ++i)
+		{
+			for (int j = 0; j < mapaResultado.size(); ++j)
+			{
+				mapaResultado[i][j] = 'P';
+			}
+		}
+
+		for (int j = mapaResultado.size() - 3; j < mapaResultado.size(); ++j)
+		{
+			for (int i = 0; i < mapaResultado.size(); ++i)
+			{
+				mapaResultado[i][j] = 'P';
+			}
+		}
+		pintar = false;
+	}
 }
 
 void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor)
@@ -496,106 +617,283 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 	}
 }
 
-int ComportamientoJugador::interact(Action accion, int valor)
+void ComportamientoJugador::PonerCantidadEnAuxiliar(const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor)
 {
-	return false;
-}
-
-int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor)
-{
-	int pos = -1, pos_posicion = -1, pos_recuperacion = -1, pos_bikini = -1, pos_zapatillas = -1;
-	hay_algo = false;
-	hay_casilla_posicion = false;
-	hay_casilla_recuperacion = false;
-	hay_casilla_bikini = false;
-	hay_casilla_zapatillas = false;
-
-	for (int i = 0; i <= 15; ++i)
+	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
 	{
-		if (terreno[i] == 'G' and !bien_situado)
+		cout << "Error: Índices fuera de los límites de la matriz." << endl;
+		return;
+	}
+	matriz[st.fil][st.col] += 1;
+	if (sensor.nivel != 3)
+	{
+		switch (st.brujula)
 		{
-			hay_casilla_posicion = true;
-			hay_algo = true;
-			if (pos_posicion == -1)
-				pos_posicion = i;
-			else if (pos_posicion > i)
-				pos_posicion = i;
+		case norte:
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 1] += 1;
+			matriz[st.fil - 2][st.col] += 1;
+			matriz[st.fil - 2][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 2] += 1;
+			matriz[st.fil - 3][st.col - 1] += 1;
+			matriz[st.fil - 3][st.col] += 1;
+			matriz[st.fil - 3][st.col + 1] += 1;
+			matriz[st.fil - 3][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col + 3] += 1;
+			break;
+
+		case noreste:
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col] += 1;
+			matriz[st.fil - 2][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col + 2] += 1;
+			matriz[st.fil - 1][st.col + 2] += 1;
+			matriz[st.fil][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col] += 1;
+			matriz[st.fil - 3][st.col + 1] += 1;
+			matriz[st.fil - 3][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col + 3] += 1;
+			matriz[st.fil - 2][st.col + 3] += 1;
+			matriz[st.fil - 1][st.col + 3] += 1;
+			matriz[st.fil][st.col + 3] += 1;
+			break;
+
+		case este:
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col + 2] += 1;
+			matriz[st.fil - 1][st.col + 2] += 1;
+			matriz[st.fil][st.col + 2] += 1;
+			matriz[st.fil + 1][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col + 3] += 1;
+			matriz[st.fil - 2][st.col + 3] += 1;
+			matriz[st.fil - 1][st.col + 3] += 1;
+			matriz[st.fil][st.col + 3] += 1;
+			matriz[st.fil + 1][st.col + 3] += 1;
+			matriz[st.fil + 2][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 3] += 1;
+			break;
+
+		case sureste:
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil][st.col + 2] += 1;
+			matriz[st.fil + 1][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 1] += 1;
+			matriz[st.fil + 2][st.col] += 1;
+			matriz[st.fil][st.col + 3] += 1;
+			matriz[st.fil + 1][st.col + 3] += 1;
+			matriz[st.fil + 2][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 2] += 1;
+			matriz[st.fil + 3][st.col + 1] += 1;
+			matriz[st.fil + 3][st.col] += 1;
+			break;
+
+		case sur:
+			matriz[st.fil + 1][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 1] += 1;
+			matriz[st.fil + 2][st.col] += 1;
+			matriz[st.fil + 2][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 2] += 1;
+			matriz[st.fil + 3][st.col + 1] += 1;
+			matriz[st.fil + 3][st.col] += 1;
+			matriz[st.fil + 3][st.col - 1] += 1;
+			matriz[st.fil + 3][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col - 3] += 1;
+			break;
+
+		case suroeste:
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col] += 1;
+			matriz[st.fil + 2][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col - 2] += 1;
+			matriz[st.fil + 1][st.col - 2] += 1;
+			matriz[st.fil][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col] += 1;
+			matriz[st.fil + 3][st.col - 1] += 1;
+			matriz[st.fil + 3][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col - 3] += 1;
+			matriz[st.fil + 2][st.col - 3] += 1;
+			matriz[st.fil + 1][st.col - 3] += 1;
+			matriz[st.fil][st.col - 3] += 1;
+			break;
+
+		case oeste:
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col - 2] += 1;
+			matriz[st.fil + 1][st.col - 2] += 1;
+			matriz[st.fil][st.col - 2] += 1;
+			matriz[st.fil - 1][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col - 3] += 1;
+			matriz[st.fil + 2][st.col - 3] += 1;
+			matriz[st.fil + 1][st.col - 3] += 1;
+			matriz[st.fil][st.col - 3] += 1;
+			matriz[st.fil - 1][st.col - 3] += 1;
+			matriz[st.fil - 2][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 3] += 1;
+			break;
+
+		case noroeste:
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil][st.col - 2] += 1;
+			matriz[st.fil - 1][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 1] += 1;
+			matriz[st.fil - 2][st.col] += 1;
+			matriz[st.fil][st.col - 3] += 1;
+			matriz[st.fil - 1][st.col - 3] += 1;
+			matriz[st.fil - 2][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 2] += 1;
+			matriz[st.fil - 3][st.col - 1] += 1;
+			matriz[st.fil - 3][st.col] += 1;
+			break;
 		}
-		if (terreno[i] == 'X')
-		{
-			hay_casilla_recuperacion = true;
-			hay_algo = true;
-			if (pos_recuperacion == -1)
-				pos_recuperacion = i;
-			else if (pos_recuperacion > i)
-				pos_recuperacion = i;
-		}
-		if (terreno[i] == 'K' and !tengo_bikini)
-		{
-			hay_casilla_bikini = true;
-			hay_algo = true;
-			if (pos_bikini == -1)
-				pos_bikini = i;
-			else if (pos_bikini > i)
-				pos_bikini = i;
-
-			if (i == 0)
-			{
-				tengo_bikini = true;
-			}
-		}
-		if (terreno[i] == 'D' and !tengo_zapatilllas)
-		{
-			hay_casilla_zapatillas = true;
-			hay_algo = true;
-			if (pos_zapatillas == -1)
-				pos_zapatillas = i;
-			else if (pos_zapatillas > i)
-				pos_recuperacion = i;
-
-			if (i == 0)
-			{
-				tengo_zapatilllas = true;
-			}
-		}
 	}
-
-	if (hay_casilla_posicion and !bien_situado)
-	{
-		pos = pos_posicion;
-	}
-	else if (hay_casilla_recuperacion and busco_bateria)
-	{
-		pos = pos_recuperacion;
-	}
-	else if (hay_casilla_zapatillas and !tengo_zapatilllas)
-	{
-		pos = pos_zapatillas;
-	}
-	else if (hay_casilla_bikini and !tengo_bikini)
-	{
-		pos = pos_bikini;
-	}
-
-	if (sensor.nivel == 3 and (pos == 6 or pos == 11 or pos == 12 or pos == 13))
-	{
-		pos = -1;
-		hay_algo = false;
-	}
-
-	return pos;
-}
-Action ComportamientoJugador::IrCasillaEnVista(int pos, const vector<unsigned char> &terreno)
-{
-	imposible = false;
-	Action accion;
-	if (pos == 1 or pos == 4 or pos == 9)
-		accion = actTURN_L;
-	else if (pos == 3 or pos == 8 or pos == 15)
-		accion = actTURN_SR;
-	else if (terreno[2] != 'M' or terreno[2] != 'P')
-		accion = actWALK;
 	else
-		imposible = true;
-	return accion;
+	{
+		switch (st.brujula)
+		{
+		case norte:
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 1] += 1;
+			matriz[st.fil - 2][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 2] += 1;
+			matriz[st.fil - 3][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col + 3] += 1;
+			break;
+
+		case noreste:
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil - 2][st.col] += 1;
+			matriz[st.fil - 2][st.col + 1] += 1;
+			matriz[st.fil - 1][st.col + 2] += 1;
+			matriz[st.fil][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col] += 1;
+			matriz[st.fil - 3][st.col + 1] += 1;
+			matriz[st.fil - 1][st.col + 3] += 1;
+			matriz[st.fil][st.col + 3] += 1;
+			break;
+
+		case este:
+			matriz[st.fil - 1][st.col + 1] += 1;
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col + 1] += 1;
+			;
+			matriz[st.fil - 2][st.col + 2] += 1;
+			matriz[st.fil - 1][st.col + 2] += 1;
+			matriz[st.fil + 1][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 2] += 1;
+			matriz[st.fil - 3][st.col + 3] += 1;
+			matriz[st.fil - 2][st.col + 3] += 1;
+			matriz[st.fil + 2][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 3] += 1;
+			break;
+
+		case sureste:
+			matriz[st.fil][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil][st.col + 2] += 1;
+			matriz[st.fil + 1][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 1] += 1;
+			matriz[st.fil + 2][st.col] += 1;
+			matriz[st.fil][st.col + 3] += 1;
+			matriz[st.fil + 1][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 1] += 1;
+			matriz[st.fil + 3][st.col] += 1;
+			break;
+
+		case sur:
+			matriz[st.fil + 1][st.col + 1] += 1;
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col + 2] += 1;
+			matriz[st.fil + 2][st.col + 1] += 1;
+			matriz[st.fil + 2][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col + 3] += 1;
+			matriz[st.fil + 3][st.col + 2] += 1;
+			matriz[st.fil + 3][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col - 3] += 1;
+			break;
+
+		case suroeste:
+			matriz[st.fil + 1][st.col] += 1;
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col] += 1;
+			matriz[st.fil + 2][st.col - 1] += 1;
+			matriz[st.fil + 1][st.col - 2] += 1;
+			matriz[st.fil][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col] += 1;
+			matriz[st.fil + 3][st.col - 1] += 1;
+			matriz[st.fil + 1][st.col - 3] += 1;
+			matriz[st.fil][st.col - 3] += 1;
+			break;
+
+		case oeste:
+			matriz[st.fil + 1][st.col - 1] += 1;
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil + 2][st.col - 2] += 1;
+			matriz[st.fil + 1][st.col - 2] += 1;
+			matriz[st.fil - 1][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 2] += 1;
+			matriz[st.fil + 3][st.col - 3] += 1;
+			matriz[st.fil + 2][st.col - 3] += 1;
+			matriz[st.fil - 2][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 3] += 1;
+			break;
+
+		case noroeste:
+			matriz[st.fil][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col - 1] += 1;
+			matriz[st.fil - 1][st.col] += 1;
+			matriz[st.fil][st.col - 2] += 1;
+			matriz[st.fil - 1][st.col - 2] += 1;
+			matriz[st.fil - 2][st.col - 1] += 1;
+			matriz[st.fil - 2][st.col] += 1;
+			matriz[st.fil][st.col - 3] += 1;
+			matriz[st.fil - 1][st.col - 3] += 1;
+			matriz[st.fil - 3][st.col - 1] += 1;
+			matriz[st.fil - 3][st.col] += 1;
+			break;
+		}
+	}
 }
+/* Crear matriz
+Tenemos que crear una otra matriz para cunado no estamos bien situados que empiece a almacenar en la casilla 99 99
+la matriz la hacemos de 200 200 y cuando estemos bien posicionados a partir de lo que hemos visto en esta matriz pegamos en el mapa Resulatdo
+*/

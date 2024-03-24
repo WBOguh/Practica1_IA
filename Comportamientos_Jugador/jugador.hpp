@@ -31,6 +31,11 @@ public:
     hay_algo = false;
     busco_bateria = false;
     imposible = false;
+
+    // Matriz auxiliar para guardar la cantidad de veces que hemos pisado/visto cada casilla
+    filas = mapaResultado.size();
+    columnas = mapaResultado[0].size();
+    mapaPasos = vector<vector<unsigned char>>(filas, vector<unsigned char>(columnas));
   }
 
   ComportamientoJugador(const ComportamientoJugador &comport) : Comportamiento(comport) {}
@@ -38,7 +43,11 @@ public:
 
   Action think(Sensores sensores);
   int interact(Action accion, int valor);
-  void PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &current_state, vector<vector<unsigned char>> &mapaResulta, Orientacion pos, Sensores sensor);
+  void PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &current_state, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor);
+  int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor);
+  Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno);
+  void PintarPrecicpicios(bool pintar);
+  void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor);
 
 private:
   // Declarar aquí las variables de estado
@@ -57,8 +66,9 @@ private:
   bool hay_algo;
   bool busco_bateria;
   bool imposible;
-
-  int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor);
-  Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno);
+  int filas;
+  int columnas;
+  vector<vector<int>> mapaPasos;
+  vector<vector<unsigned char>> mapaNoSituado;
 };
 #endif
