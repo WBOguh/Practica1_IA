@@ -95,6 +95,8 @@ private:
   int a_este;
   int a_sur;
   int a_oeste;
+  int fil_pos;
+  int col_pos;
   Orientacion ini_norte;
   Orientacion ini_sur;
   Orientacion ini_este;

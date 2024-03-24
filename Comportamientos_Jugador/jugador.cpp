@@ -37,33 +37,6 @@ Action ComportamientoJugador::think(Sensores sensores)
 		cout << " Noroeste\n";
 		break;
 	}
-	switch (ini_norte)
-	{
-	case norte:
-		cout << " Norte\n";
-		break;
-	case noreste:
-		cout << " Noreste\n";
-		break;
-	case este:
-		cout << " Este\n";
-		break;
-	case sureste:
-		cout << " Sureste\n";
-		break;
-	case sur:
-		cout << " Sur\n";
-		break;
-	case suroeste:
-		cout << " Suroeste\n";
-		break;
-	case oeste:
-		cout << " Oeste\n";
-		break;
-	case noroeste:
-		cout << " Noroeste\n";
-		break;
-	}
 	cout << "Terreno: ";
 	for (int i = 0; i < sensores.terreno.size(); i++)
 		cout << sensores.terreno[i];
@@ -192,6 +165,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 	}
 	if (sensores.terreno[0] == 'G' and !bien_situado)
 	{
+		PonerTerrenoMatrizNoSituado(sensores.terreno, current_state, mapaNoSituado, current_state.brujula, sensores);
 		current_state.fil = sensores.posF;
 		current_state.col = sensores.posC;
 		current_state.brujula = sensores.sentido;
@@ -1029,6 +1003,8 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 		return;
 	}
 	matriz[fil][col] = terreno[0];
+	fil_pos = fil;
+	col_pos = col;
 	cout << fil << " " << col << " " << terreno[0] << endl;
 	if (sensor.nivel != 3)
 	{
@@ -1306,21 +1282,11 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 	if (sensor.nivel == 1 or sensor.nivel == 2)
 	{
 		for (int i = 0; i < matriz_pequeña.size(); ++i)
-		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				int fila_grande = fila + i;
-				int columna_grande = columna + j;
-
-				if (fila_grande >= 0 && fila_grande < matriz_grande.size() && columna_grande >= 0 && columna_grande < matriz_grande[0].size())
-				{
-					cout << "fila_grande: " << fila_grande << ", columna_grande: " << columna_grande << ", valor: " << matriz_grande[fila_grande][columna_grande] << endl;
-
-					if (matriz_grande[fila_grande][columna_grande] != '0')
-						matriz_pequeña[i][j] = matriz_grande[fila_grande][columna_grande];
-				}
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 			}
-		}
 
 		for (int i = 0; i < matriz_grande.size(); ++i)
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
