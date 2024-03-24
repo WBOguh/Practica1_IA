@@ -42,6 +42,8 @@ public:
     a_este = ini_este;
     a_sur = ini_sur;
     a_oeste = ini_oeste;
+    norte_una_vez = true;
+    b = 0;
 
     // Matriz auxiliar para guardar la cantidad de veces que hemos pisado/visto cada casilla
     filas = mapaResultado.size();
@@ -62,6 +64,7 @@ public:
   Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno);
   void PintarPrecicpicios(bool pintar);
   void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
+  void PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor);
 
 private:
   // Declarar aquí las variables de estado
@@ -71,6 +74,7 @@ private:
   bool girar_derecha;
   bool bien_situado;
   bool primera_vez;
+  bool norte_una_vez;
   bool hay_casilla_posicion;
   bool hay_casilla_recuperacion;
   bool hay_casilla_zapatillas;
@@ -85,6 +89,7 @@ private:
   int fil;
   int col;
   int a;
+  int b;
   int pos;
   int a_norte;
   int a_este;

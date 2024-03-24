@@ -1,5 +1,6 @@
 #include "../Comportamientos_Jugador/jugador.hpp"
 #include <iostream>
+
 using namespace std;
 
 Action ComportamientoJugador::think(Sensores sensores)
@@ -10,6 +11,33 @@ Action ComportamientoJugador::think(Sensores sensores)
 	// Mostrar el valor de los sensores
 	cout << "Posicion: fila " << sensores.posF << " columna " << sensores.posC;
 	switch (sensores.sentido)
+	{
+	case norte:
+		cout << " Norte\n";
+		break;
+	case noreste:
+		cout << " Noreste\n";
+		break;
+	case este:
+		cout << " Este\n";
+		break;
+	case sureste:
+		cout << " Sureste\n";
+		break;
+	case sur:
+		cout << " Sur\n";
+		break;
+	case suroeste:
+		cout << " Suroeste\n";
+		break;
+	case oeste:
+		cout << " Oeste\n";
+		break;
+	case noroeste:
+		cout << " Noroeste\n";
+		break;
+	}
+	switch (ini_norte)
 	{
 	case norte:
 		cout << " Norte\n";
@@ -157,8 +185,11 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.brujula = sensores.sentido;
 		bien_situado = true;
 	}
-	else if (sensores.nivel == 1 or sensores.nivel == 2)
+	else if ((sensores.nivel == 1 or sensores.nivel == 2) && norte_una_vez)
+	{
 		current_state.brujula = norte;
+		norte_una_vez = false;
+	}
 	if (sensores.terreno[0] == 'G' and !bien_situado)
 	{
 		current_state.fil = sensores.posF;
@@ -168,6 +199,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		cout << "Bien posicionado" << endl;
 		fil = 99;
 		col = 99;
+		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores);
 	}
 	if (!bien_situado)
 	{
@@ -909,7 +941,7 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 	case actWALK:
 		if (sensor.colision == false)
 		{
-			switch (current_state.brujula)
+			switch (ini_norte)
 			{
 			case norte:
 				fil--;
@@ -946,7 +978,7 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 	case actRUN:
 		if (sensor.colision == false)
 		{
-			switch (current_state.brujula)
+			switch (ini_norte)
 			{
 			case norte:
 				fil -= 2;
@@ -980,30 +1012,14 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 		}
 		break;
 	case actTURN_SR:
-		a = current_state.brujula;
-		a = (a + 1) % 8;
-		a_norte = (a + 1) % 8;
-		a_sur = (a + 1) % 8;
-		a_este = (a + 1) % 8;
-		a_oeste = (a + 1) % 8;
-		current_state.brujula = static_cast<Orientacion>(a);
-		ini_norte = static_cast<Orientacion>(a_norte);
-		ini_sur = static_cast<Orientacion>(a_sur);
-		ini_este = static_cast<Orientacion>(a_este);
-		ini_oeste = static_cast<Orientacion>(a_oeste);
+		b = ini_norte;
+		b = (b + 1) % 8;
+		ini_norte = static_cast<Orientacion>(b);
 		break;
 	case actTURN_L:
-		a = current_state.brujula;
-		a = (a + 6) % 8;
-		a_norte = (a + 6) % 8;
-		a_sur = (a + 6) % 8;
-		a_este = (a + 6) % 8;
-		a_oeste = (a + 6) % 8;
-		current_state.brujula = static_cast<Orientacion>(a);
-		ini_norte = static_cast<Orientacion>(a_norte);
-		ini_sur = static_cast<Orientacion>(a_sur);
-		ini_este = static_cast<Orientacion>(a_este);
-		ini_oeste = static_cast<Orientacion>(a_oeste);
+		b = ini_norte;
+		b = (b - 2 + 8) % 8;
+		ini_norte = static_cast<Orientacion>(b);
 		break;
 	}
 
@@ -1013,9 +1029,10 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 		return;
 	}
 	matriz[fil][col] = terreno[0];
+	cout << fil << " " << col << " " << terreno[0] << endl;
 	if (sensor.nivel != 3)
 	{
-		switch (st.brujula)
+		switch (ini_norte)
 		{
 		case norte:
 			matriz[fil - 1][col - 1] = terreno[1];
@@ -1164,7 +1181,7 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 	}
 	else
 	{
-		switch (st.brujula)
+		switch (pos)
 		{
 		case norte:
 			matriz[fil - 1][col - 1] = terreno[1];
@@ -1284,3 +1301,31 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 Tenemos que crear una otra matriz para cunado no estamos bien situados que empiece a almacenar en la casilla 99 99
 la matriz la hacemos de 200 200 y cuando estemos bien posicionados a partir de lo que hemos visto en esta matriz pegamos en el mapa Resulatdo
 */
+void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor)
+{
+	if (sensor.nivel == 1 or sensor.nivel == 2)
+	{
+		for (int i = 0; i < matriz_pequeña.size(); ++i)
+		{
+			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
+			{
+				int fila_grande = fila + i;
+				int columna_grande = columna + j;
+
+				if (fila_grande >= 0 && fila_grande < matriz_grande.size() && columna_grande >= 0 && columna_grande < matriz_grande[0].size())
+				{
+					cout << "fila_grande: " << fila_grande << ", columna_grande: " << columna_grande << ", valor: " << matriz_grande[fila_grande][columna_grande] << endl;
+
+					if (matriz_grande[fila_grande][columna_grande] != '0')
+						matriz_pequeña[i][j] = matriz_grande[fila_grande][columna_grande];
+				}
+			}
+		}
+
+		for (int i = 0; i < matriz_grande.size(); ++i)
+			for (int j = 0; j < matriz_grande[0].size(); ++j)
+			{
+				matriz_grande[i][j] = '0';
+			}
+	}
+}
