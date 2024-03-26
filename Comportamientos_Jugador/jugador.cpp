@@ -149,6 +149,14 @@ Action ComportamientoJugador::think(Sensores sensores)
 		{
 			bien_situado = false;
 		}
+
+		for (int i = 0; i < mapaNoSituado.size(); i++)
+		{
+			for (int j = 0; j < mapaNoSituado[0].size(); j++)
+			{
+				mapaNoSituado[i][j] = 0;
+			}
+		}
 	}
 
 	if (sensores.nivel == 0)
@@ -173,7 +181,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		cout << "Bien posicionado" << endl;
 		fil = 99;
 		col = 99;
-		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores);
+		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
 	}
 	if (!bien_situado)
 	{
@@ -989,11 +997,29 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 		b = ini_norte;
 		b = (b + 1) % 8;
 		ini_norte = static_cast<Orientacion>(b);
+		c = ini_este;
+		c = (c + 1) % 8;
+		ini_este = static_cast<Orientacion>(c);
+		d = ini_sur;
+		d = (d + 1) % 8;
+		ini_sur = static_cast<Orientacion>(d);
+		e = ini_oeste;
+		e = (e + 1) % 8;
+		ini_oeste = static_cast<Orientacion>(e);
 		break;
 	case actTURN_L:
 		b = ini_norte;
 		b = (b - 2 + 8) % 8;
 		ini_norte = static_cast<Orientacion>(b);
+		c = ini_este;
+		c = (c - 2 + 8) % 8;
+		ini_este = static_cast<Orientacion>(c);
+		d = ini_sur;
+		d = (d - 2 + 8) % 8;
+		ini_sur = static_cast<Orientacion>(d);
+		e = ini_oeste;
+		e = (e - 2 + 8) % 8;
+		ini_oeste = static_cast<Orientacion>(e);
 		break;
 	}
 
@@ -1273,25 +1299,121 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 		}
 	}
 }
-/* Crear matriz
-Tenemos que crear una otra matriz para cunado no estamos bien situados que empiece a almacenar en la casilla 99 99
-la matriz la hacemos de 200 200 y cuando estemos bien posicionados a partir de lo que hemos visto en esta matriz pegamos en el mapa Resulatdo
-*/
-void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor)
+void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado)
 {
-	if (sensor.nivel == 1 or sensor.nivel == 2)
+	int fila_aux = fil_pos, col_aux = col_pos;
+	if (sensor.nivel == 1 or sensor.nivel == 2 or situado == ini_norte)
 	{
 		for (int i = 0; i < matriz_pequeña.size(); ++i)
+		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
 				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
+					mapaPasos[i][j]++;
+				}
 			}
-
+		}
 		for (int i = 0; i < matriz_grande.size(); ++i)
+		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
 			{
 				matriz_grande[i][j] = '0';
 			}
+		}
 	}
+	else if (sensor.nivel == 3)
+	{
+		if (situado == ini_este)
+		{
+			girar_matriz_derecha(matriz_grande);
+			fil_pos = col_pos;
+			col_pos = matriz_grande[0].size() - fila_aux - 1;
+
+			for (int i = 0; i < matriz_pequeña.size(); ++i)
+			{
+				for (int j = 0; j < matriz_pequeña[0].size(); ++j)
+				{
+					if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+					{
+						matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
+						mapaPasos[i][j]++;
+					}
+				}
+			}
+			for (int i = 0; i < matriz_grande.size(); ++i)
+			{
+				for (int j = 0; j < matriz_grande[0].size(); ++j)
+				{
+					matriz_grande[i][j] = '0';
+				}
+			}
+		}
+		else if (situado == ini_sur)
+		{
+			for (int i = 0; i < 2; i++)
+				girar_matriz_derecha(matriz_grande);
+			fil_pos = matriz_grande.size() - fila_aux - 1;
+			col_pos = matriz_grande[0].size() - col_aux - 1;
+			for (int i = 0; i < matriz_pequeña.size(); ++i)
+			{
+				for (int j = 0; j < matriz_pequeña[0].size(); ++j)
+				{
+					if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+					{
+						matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
+						mapaPasos[i][j]++;
+					}
+				}
+			}
+
+			for (int i = 0; i < matriz_grande.size(); ++i)
+			{
+				for (int j = 0; j < matriz_grande[0].size(); ++j)
+				{
+					matriz_grande[i][j] = '0';
+				}
+			}
+		}
+		else if (situado == ini_oeste)
+		{
+			for (int i = 0; i < 3; i++)
+				girar_matriz_derecha(matriz_grande);
+
+			fil_pos = matriz_grande[0].size() - col_aux - 1;
+			col_pos = fila_aux;
+			for (int i = 0; i < matriz_pequeña.size(); ++i)
+			{
+				for (int j = 0; j < matriz_pequeña[0].size(); ++j)
+				{
+					if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+					{
+						matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
+						mapaPasos[i][j]++;
+					}
+				}
+			}
+
+			for (int i = 0; i < matriz_grande.size(); ++i)
+			{
+				for (int j = 0; j < matriz_grande[0].size(); ++j)
+				{
+					matriz_grande[i][j] = '0';
+				}
+			}
+		}
+	}
+}
+void ComportamientoJugador::girar_matriz_derecha(vector<vector<unsigned char>> &matriz)
+{
+	vector<vector<unsigned char>> matriz_aux(matriz.size(), vector<unsigned char>(matriz[0].size(), '0'));
+	for (int i = 0; i < matriz.size(); ++i)
+	{
+		for (int j = 0; j < matriz[0].size(); ++j)
+		{
+			matriz_aux[j][matriz.size() - i - 1] = matriz[i][j];
+		}
+	}
+	matriz = matriz_aux;
 }
