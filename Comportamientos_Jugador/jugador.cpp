@@ -140,7 +140,10 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.brujula = static_cast<Orientacion>(a);
 		break;
 	}
-
+	if (sensores.bateria < 3000)
+		busco_bateria = true;
+	else
+		busco_bateria = false;
 	if (sensores.reset == true)
 	{
 		tengo_bikini = false;
@@ -183,6 +186,10 @@ Action ComportamientoJugador::think(Sensores sensores)
 		col = 99;
 		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
 	}
+	else if (sensores.terreno[0] == 'B' and !tengo_bikini)
+		tengo_bikini = true;
+	else if (sensores.terreno[0] == 'D' and !tengo_zapatilllas)
+		tengo_zapatilllas = true;
 	if (!bien_situado)
 	{
 		PonerTerrenoMatrizNoSituado(sensores.terreno, current_state, mapaNoSituado, current_state.brujula, sensores);
@@ -201,22 +208,10 @@ Action ComportamientoJugador::think(Sensores sensores)
 	}
 	else
 	{
-		if (sensores.terreno[2] == 'T' or sensores.terreno[2] == 'S' or sensores.terreno[2] == 'G' and sensores.agentes[2] == '_')
-		{
-			accion = actWALK;
-		}
-		else if (!girar_derecha)
-		{
-			accion = actTURN_L;
-			girar_derecha = (rand() % 2 == 0);
-		}
-		else
-		{
-			accion = actTURN_SR;
-			girar_derecha = (rand() % 2 == 0);
-		}
+		accion = movimientoGeneral(sensores);
 	}
-
+	if (imposible)
+		accion = movimientoGeneral(sensores);
 	last_action = accion;
 	return accion;
 }
@@ -225,7 +220,6 @@ int ComportamientoJugador::interact(Action accion, int valor)
 {
 	return false;
 }
-
 int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor)
 {
 	int pos = -1, pos_posicion = -1, pos_recuperacion = -1, pos_bikini = -1, pos_zapatillas = -1;
@@ -285,13 +279,13 @@ int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsign
 		}
 	}
 
-	if (hay_casilla_posicion and !bien_situado)
-	{
-		pos = pos_posicion;
-	}
-	else if (hay_casilla_recuperacion and busco_bateria)
+	if (hay_casilla_recuperacion and busco_bateria)
 	{
 		pos = pos_recuperacion;
+		}
+	else if (hay_casilla_posicion and !bien_situado)
+	{
+		pos = pos_posicion;
 	}
 	else if (hay_casilla_zapatillas and !tengo_zapatilllas)
 	{
@@ -310,7 +304,6 @@ int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsign
 
 	return pos;
 }
-
 Action ComportamientoJugador::IrCasillaEnVista(int pos, const vector<unsigned char> &terreno)
 {
 	imposible = false;
@@ -325,7 +318,6 @@ Action ComportamientoJugador::IrCasillaEnVista(int pos, const vector<unsigned ch
 		imposible = true;
 	return accion;
 }
-
 void ComportamientoJugador::PintarPrecicpicios(bool pintar)
 {
 	if (pintar)
@@ -362,7 +354,6 @@ void ComportamientoJugador::PintarPrecicpicios(bool pintar)
 		pintar = false;
 	}
 }
-
 void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor)
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
@@ -638,7 +629,6 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 		}
 	}
 }
-
 void ComportamientoJugador::PonerCantidadEnAuxiliar(const state &st, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor)
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
@@ -1416,4 +1406,104 @@ void ComportamientoJugador::girar_matriz_derecha(vector<vector<unsigned char>> &
 		}
 	}
 	matriz = matriz_aux;
+}
+Action ComportamientoJugador::movimientoGeneral(Sensores sensor)
+{
+	Action accion;
+	int next_pos = -1;
+	if (bien_situado)
+	{
+		if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
+		{
+			accion = actWALK;
+		}
+		else if (!girar_derecha)
+		{
+			accion = actTURN_L;
+			girar_derecha = (rand() % 2 == 0);
+		}
+		else
+		{
+			accion = actTURN_SR;
+			girar_derecha = (rand() % 2 == 0);
+		}
+	}
+	else
+	{
+		if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
+		{
+			accion = actWALK;
+			cont_giros = 0;
+		}
+		else
+		{
+			if (cont_giros < 4)
+			{
+				accion = actTURN_L;
+				cont_giros++;
+			}
+			else if (cont_giros == 4)
+				atrapado = true;
+			if (sensor.terreno[2] == 'P' or sensor.terreno[2] == 'M')
+			{
+				if ((sensor.terreno[1] == 'P' or sensor.terreno[1] == 'M') and (sensor.terreno[3] == 'P' or sensor.terreno[3] == 'M'))
+				{
+					if (rand() % 2 == 0)
+						accion = actTURN_L;
+					else
+					{
+						accion = actTURN_SR;
+						girar_derecha = true;
+					}
+				}
+			}
+		}
+		if (girar_derecha)
+		{
+			accion = actTURN_SR;
+			girar_derecha = false;
+		}
+
+		if (girar_izquierda)
+		{
+			accion = actTURN_L;
+			girar_izquierda = false;
+		}
+		if (atrapado)
+		{
+			for (int i = 15; i >= 1; --i)
+			{
+				if (sensor.terreno[i] != 'P' and sensor.terreno[i] != 'M' and sensor.terreno[i] != 'A' and sensor.terreno[i] != 'B' and sensor.agentes[i] == '_')
+				{
+					next_pos = i;
+				}
+			}
+			if (next_pos != -1)
+				accion = IrCasillaEnVista(next_pos, sensor.terreno);
+			else
+			{
+				if (sensor.terreno[2] != 'P' and sensor.terreno[2] != 'M' and sensor.agentes[2] == '_')
+					accion = actWALK;
+				else
+				{
+					if (rand() % 2 == 0)
+						accion = actTURN_L;
+					else
+					{
+						accion = actTURN_SR;
+						girar_derecha = true;
+					}
+				}
+			}
+		}
+		if (sensor.nivel != 3 and (sensor.terreno[3] == 'P' or sensor.terreno[3] == 'M') and (sensor.terreno[7] == 'P' or sensor.terreno[7] == 'M') and (sensor.terreno[6] == 'P' or sensor.terreno[6] == 'M') and sensor.agentes[2] == '_')
+		{
+			girar_izquierda = true;
+		}
+		else if (sensor.nivel != 3 and (sensor.terreno[1] == 'P' or sensor.terreno[1] == 'M') and (sensor.terreno[5] == 'P' or sensor.terreno[5] == 'M') and (sensor.terreno[6] == 'P' or sensor.terreno[6] == 'M') and sensor.agentes[2] == '_')
+		{
+			girar_derecha = true;
+		}
+	}
+	return accion;
 }

@@ -22,6 +22,7 @@ public:
     col = 99;
     current_state.brujula = norte;
     girar_derecha = false;
+    girar_izquierda = false;
     bien_situado = false;
     primera_vez = true;
     hay_casilla_posicion = false;
@@ -33,6 +34,7 @@ public:
     hay_algo = false;
     busco_bateria = false;
     imposible = false;
+    atrapado = false;
     pos = -1;
     ini_norte = norte;
     ini_sur = sur;
@@ -69,6 +71,7 @@ public:
   void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
   void PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado);
   void girar_matriz_derecha(vector<vector<unsigned char>> &matriz);
+  Action movimientoGeneral(Sensores sensor);
 
 private:
   // Declarar aquí las variables de estado
@@ -76,6 +79,7 @@ private:
   Orientacion brujula;
   Action last_action;
   bool girar_derecha;
+  bool girar_izquierda;
   bool bien_situado;
   bool primera_vez;
   bool norte_una_vez;
@@ -104,6 +108,8 @@ private:
   int a_oeste;
   int fil_pos;
   int col_pos;
+  int cont_giros;
+  bool atrapado;
   Orientacion ini_norte;
   Orientacion ini_sur;
   Orientacion ini_este;
