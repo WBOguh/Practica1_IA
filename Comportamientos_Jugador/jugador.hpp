@@ -49,7 +49,8 @@ public:
     c = 2;
     d = 4;
     e = 6;
-
+    pos_lobo = 99;
+    pos_aldeano = 99;
     // Matriz auxiliar para guardar la cantidad de veces que hemos pisado/visto cada casilla
     filas = mapaResultado.size();
     columnas = mapaResultado[0].size();
@@ -66,12 +67,14 @@ public:
   void PonerTerrenoMatriz(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor);
   void PonerTerrenoMatrizNoSituado(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor);
   int HayCasilaEspecialNecesariaEnVista(const vector<unsigned char> &terreno, Sensores sensor);
-  Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno);
+  Action IrCasillaEnVista(int pos, const vector<unsigned char> &terreno, Sensores sensor);
   void PintarPrecicpicios(bool pintar);
   void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
   void PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado);
   void girar_matriz_derecha(vector<vector<unsigned char>> &matriz);
   Action movimientoGeneral(Sensores sensor);
+  Action HayEntidadesEnVista(Sensores sensor);
+  Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
 
 private:
   // Declarar aquí las variables de estado
@@ -109,6 +112,8 @@ private:
   int fil_pos;
   int col_pos;
   int cont_giros;
+  int pos_lobo;
+  int pos_aldeano;
   bool atrapado;
   Orientacion ini_norte;
   Orientacion ini_sur;
