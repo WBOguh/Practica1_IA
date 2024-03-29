@@ -51,6 +51,7 @@ public:
     e = 6;
     pos_lobo = 99;
     pos_aldeano = 99;
+    cont_pasos = 0;
     // Matriz auxiliar para guardar la cantidad de veces que hemos pisado/visto cada casilla
     filas = mapaResultado.size();
     columnas = mapaResultado[0].size();
@@ -75,6 +76,7 @@ public:
   Action movimientoGeneral(Sensores sensor);
   Action HayEntidadesEnVista(Sensores sensor);
   Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
+  Action SeguirMuro(Sensores sensor);
 
 private:
   // Declarar aquí las variables de estado
@@ -112,6 +114,7 @@ private:
   int fil_pos;
   int col_pos;
   int cont_giros;
+  int cont_pasos;
   int pos_lobo;
   int pos_aldeano;
   bool atrapado;
