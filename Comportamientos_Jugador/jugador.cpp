@@ -1,5 +1,6 @@
 #include "../Comportamientos_Jugador/jugador.hpp"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -204,6 +205,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		tengo_bikini = true;
 	else if (sensores.terreno[0] == 'D' and !tengo_zapatilllas)
 		tengo_zapatilllas = true;
+
 	if (!bien_situado)
 	{
 		PonerTerrenoMatrizNoSituado(sensores.terreno, current_state, mapaNoSituado, current_state.brujula, sensores);
@@ -224,14 +226,19 @@ Action ComportamientoJugador::think(Sensores sensores)
 	else
 	{
 		cout << "Movimiento general" << endl;
-		accion = movimientoGeneral(sensores);
+		accion = movimientoGeneral(sensores, current_state);
 	}
 
 	if (imposible)
-		accion = movimientoGeneral(sensores);
+		accion = movimientoGeneral(sensores, current_state);
 	if (busco_bateria and sensores.terreno[0] == 'X')
 	{
 		accion = actIDLE;
+	}
+	if (girar_derecha)
+	{
+		accion = actTURN_SR;
+		girar_derecha = false;
 	}
 	last_action = accion;
 	return accion;
@@ -931,6 +938,7 @@ void ComportamientoJugador::PonerCantidadEnAuxiliar(const state &st, vector<vect
 }
 void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor)
 {
+	// Preguntar sobre si hacer solo esto si no ha habido un reset
 	switch (last_action)
 	{
 
@@ -1428,77 +1436,89 @@ void ComportamientoJugador::girar_matriz_derecha(vector<vector<unsigned char>> &
 	}
 	matriz = matriz_aux;
 }
-Action ComportamientoJugador::movimientoGeneral(Sensores sensor)
+Action ComportamientoJugador::movimientoGeneral(Sensores sensor, state current_state)
 {
 	Action accion = actIDLE;
 	int next_pos = -1;
-	if (bien_situado)
+
+	if (sensor.nivel != 3)
 	{
-		if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
-		{
-			accion = actWALK;
-		}
-		else if (!girar_derecha)
-		{
-			accion = actTURN_L;
-			girar_derecha = (rand() % 2 == 0);
-		}
-		else
-		{
-			accion = actTURN_SR;
-			girar_derecha = (rand() % 2 == 0);
-		}
-	}
-	else
-	{
-		accion = HayEntidadesEnVista(sensor);
-		if (accion == actIDLE)
+		if (bien_situado)
 		{
 			if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
 			{
 				accion = actWALK;
-				if (sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.terreno[7] == 'M' and (sensor.terreno[13] == 'M' or sensor.terreno[13] == 'P'))
-				{
-					accion = actTURN_SR;
-				}
-				cout << "Nada delante o salida muro" << endl;
 			}
-			else if ((sensor.terreno[0] == 'A' and !tengo_bikini) or (sensor.terreno[0] == 'B' and !tengo_zapatilllas))
-			{
-				accion = Atrapado(sensor.terreno, sensor);
-				cout << "Atrapado" << endl;
-			}
-			else if (sensor.terreno[2] == 'M' or sensor.terreno[1] == 'M' or sensor.terreno[3] == 'M' or sensor.terreno[5] == 'M' or sensor.terreno[7] == 'M')
-			{
-				accion = SeguirMuro(sensor);
-				cout << "Muro" << endl;
-			}
-			else if (sensor.terreno[2] == 'P')
+			else if (!girar_derecha)
 			{
 				accion = actTURN_L;
-				cout << "Precipicio" << endl;
-			}
-			else if (sensor.terreno[2] == 'A' and !tengo_bikini)
-			{
-				accion = Atrapado(sensor.terreno, sensor);
-				cout << "Atrapado enfrente agua" << endl;
-			}
-			else if (sensor.terreno[2] == 'B' and !tengo_zapatilllas)
-			{
-				accion = Atrapado(sensor.terreno, sensor);
-				cout << "Atrapado enfrente bosque" << endl;
+				girar_derecha = (rand() % 2 == 0);
 			}
 			else
 			{
-				accion = actWALK;
-				cout << "Andar" << endl;
+				accion = actTURN_SR;
+				girar_derecha = (rand() % 2 == 0);
 			}
-			if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
-				if (rand() % 2 == 0)
+			/*
+			accion = HayEntidadesEnVista(sensor);
+			if (accion == actIDLE)
+			{
+				if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' or sensor.terreno[2] == 'K' or sensor.terreno[2] == 'D' or sensor.terreno[2] == 'X')
+					accion = actWALK;
+			}
+			*/
+		}
+		else
+		{
+			accion = HayEntidadesEnVista(sensor);
+			if (accion == actIDLE)
+			{
+				if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
+				{
+					accion = actWALK;
+					if (sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.terreno[7] == 'M' and (sensor.terreno[13] == 'M' or sensor.terreno[13] == 'P'))
+					{
+						accion = actTURN_SR;
+					}
+					cout << "Nada delante o salida muro" << endl;
+				}
+				else if ((sensor.terreno[0] == 'A' and !tengo_bikini) or (sensor.terreno[0] == 'B' and !tengo_zapatilllas))
+				{
+					accion = Atrapado(sensor.terreno, sensor);
+					cout << "Atrapado" << endl;
+				}
+				else if (sensor.terreno[2] == 'M' or sensor.terreno[1] == 'M' or sensor.terreno[3] == 'M' or sensor.terreno[5] == 'M' or sensor.terreno[7] == 'M')
+				{
+					accion = SeguirMuro(sensor);
+					cout << "Muro" << endl;
+				}
+				else if (sensor.terreno[2] == 'P')
+				{
 					accion = actTURN_L;
+					cout << "Precipicio" << endl;
+				}
+				else if (sensor.terreno[2] == 'A' and !tengo_bikini)
+				{
+					accion = Atrapado(sensor.terreno, sensor);
+					cout << "Atrapado enfrente agua" << endl;
+				}
+				else if (sensor.terreno[2] == 'B' and !tengo_zapatilllas)
+				{
+					accion = Atrapado(sensor.terreno, sensor);
+					cout << "Atrapado enfrente bosque" << endl;
+				}
+				else
+				{
+					accion = actWALK;
+					cout << "Andar" << endl;
+				}
+				if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
+					if (rand() % 2 == 0)
+						accion = actTURN_L;
 
-			if (accion == actWALK)
-				cont_pasos++;
+				if (accion == actWALK)
+					cont_pasos++;
+			}
 		}
 	}
 	return accion;
@@ -1577,7 +1597,7 @@ Action ComportamientoJugador::SeguirMuro(Sensores sensor)
 	Action accion;
 	if (!bien_situado)
 	{
-		if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and sensor.terreno[3] == 'M')
+		if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P'))
 			accion = actTURN_L;
 		else if (sensor.terreno[1] == 'M' and (sensor.terreno[2] != 'P' and sensor.terreno[2] != 'M') and sensor.terreno[3] == 'M' and sensor.agentes[2] == '_')
 			accion = actWALK;
@@ -1598,6 +1618,39 @@ Action ComportamientoJugador::SeguirMuro(Sensores sensor)
 			else
 				accion = actTURN_L;
 		}
+		else if (sensor.terreno[3] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P'))
+		{
+			accion = actTURN_SR;
+			girar_derecha = true;
+		}
 	}
 	return accion;
+}
+state ComportamientoJugador::CasillaDesconocidaMasCercana(state st, vector<vector<int>> &matriz)
+{
+	state casillaMasCercana = st; // Inicializamos con la posición dada
+	/*double distanciaMinima = std::numeric_limits<double>::max(); // Inicializamos con un valor grande
+
+	for (int i = 0; i < filas; ++i)
+	{
+		for (int j = 0; j < columnas; ++j)
+		{
+			if (matriz[i][j] == 0)
+			{												   // Si la casilla tiene valor 0
+				double dist = distancia(st.fil, st.col, i, j); // Calculamos la distancia
+				if (dist < distanciaMinima)
+				{							   // Si la distancia es menor que la mínima actual
+					distanciaMinima = dist;	   // Actualizamos la distancia mínima
+					casillaMasCercana.fil = i; // Actualizamos la fila de la casilla más cercana
+					casillaMasCercana.col = j; // Actualizamos la columna de la casilla más cercana
+				}
+			}
+		}
+	}
+	distancia_casilla = distanciaMinima;*/
+	return casillaMasCercana;
+}
+double distancia(int x1, int y1, int x2, int y2)
+{
+	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }

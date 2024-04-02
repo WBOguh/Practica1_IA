@@ -52,6 +52,7 @@ public:
     pos_lobo = 99;
     pos_aldeano = 99;
     cont_pasos = 0;
+    distancia_casilla = 0;
     // Matriz auxiliar para guardar la cantidad de veces que hemos pisado/visto cada casilla
     filas = mapaResultado.size();
     columnas = mapaResultado[0].size();
@@ -73,10 +74,12 @@ public:
   void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
   void PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado);
   void girar_matriz_derecha(vector<vector<unsigned char>> &matriz);
-  Action movimientoGeneral(Sensores sensor);
+  Action movimientoGeneral(Sensores sensor, state current_state);
   Action HayEntidadesEnVista(Sensores sensor);
   Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
   Action SeguirMuro(Sensores sensor);
+  state CasillaDesconocidaMasCercana(state st, vector<vector<int>> &matriz);
+  double distancia(int x1, int y1, int x2, int y2);
 
 private:
   // Declarar aquí las variables de estado
@@ -117,6 +120,7 @@ private:
   int cont_pasos;
   int pos_lobo;
   int pos_aldeano;
+  double distancia_casilla;
   bool atrapado;
   Orientacion ini_norte;
   Orientacion ini_sur;
