@@ -153,6 +153,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		busco_bateria = false;
 	if (sensores.reset == true)
 	{
+		last_action = actIDLE;
 		current_state.col = 99;
 		current_state.fil = 99;
 		tengo_bikini = false;
@@ -166,7 +167,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		{
 			for (int j = 0; j < mapaNoSituado[0].size(); j++)
 			{
-				mapaNoSituado[i][j] = '0';
+				mapaNoSituado[i][j] = '?';
 			}
 		}
 		col = 99;
@@ -197,8 +198,6 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.brujula = sensores.sentido;
 		bien_situado = true;
 		cout << "Bien posicionado" << endl;
-		fil = 99;
-		col = 99;
 		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
 	}
 	else if (sensores.terreno[0] == 'B' and !tengo_bikini)
@@ -938,7 +937,6 @@ void ComportamientoJugador::PonerCantidadEnAuxiliar(const state &st, vector<vect
 }
 void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned char> &terreno, const state &st, vector<vector<unsigned char>> &matriz, Orientacion pos, Sensores sensor)
 {
-	// Preguntar sobre si hacer solo esto si no ha habido un reset
 	switch (last_action)
 	{
 
@@ -1323,6 +1321,15 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 }
 void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado)
 {
+
+	for (int i = 0; i < matriz_grande.size(); ++i)
+	{
+		for (int j = 0; j < matriz_grande[0].size(); ++j)
+			if (matriz_grande[i][j] != '?')
+				cout << matriz_grande[i][j] << " ";
+
+		cout << endl;
+	}
 	int fila_aux = fil_pos, col_aux = col_pos;
 	if (situado == ini_norte)
 	{
@@ -1330,18 +1337,20 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
+					cout << matriz_pequeña[i][j] << " ";
 				}
 			}
+			cout << endl;
 		}
 		for (int i = 0; i < matriz_grande.size(); ++i)
 		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
 			{
-				matriz_grande[i][j] = '0';
+				matriz_grande[i][j] = '?';
 			}
 		}
 	}
@@ -1355,7 +1364,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
@@ -1366,7 +1375,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
 			{
-				matriz_grande[i][j] = '0';
+				matriz_grande[i][j] = '?';
 			}
 		}
 	}
@@ -1380,7 +1389,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
@@ -1392,7 +1401,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
 			{
-				matriz_grande[i][j] = '0';
+				matriz_grande[i][j] = '?';
 			}
 		}
 	}
@@ -1407,7 +1416,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '0')
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
@@ -1419,7 +1428,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
 			{
-				matriz_grande[i][j] = '0';
+				matriz_grande[i][j] = '?';
 			}
 		}
 	}
@@ -1515,7 +1524,13 @@ Action ComportamientoJugador::movimientoGeneral(Sensores sensor, state current_s
 				if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
 					if (rand() % 2 == 0)
 						accion = actTURN_L;
-
+				if (cont_pasos >= 10 and accion == actWALK)
+				{
+					if (rand() % 4 == 0)
+						accion = actTURN_L;
+					else if (rand() % 4 == 0)
+						accion = actTURN_SR;
+				}
 				if (accion == actWALK)
 					cont_pasos++;
 			}
@@ -1583,7 +1598,7 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 	if (imposible)
 		accion = actTURN_L;
 	else if (cont_giros >= 4)
-		if (terreno[2] != 'P' or terreno[2] != 'M')
+		if (terreno[2] != 'P' and terreno[2] != 'M')
 			accion = actWALK;
 		else
 			accion = actTURN_L;
@@ -1626,31 +1641,5 @@ Action ComportamientoJugador::SeguirMuro(Sensores sensor)
 	}
 	return accion;
 }
-state ComportamientoJugador::CasillaDesconocidaMasCercana(state st, vector<vector<int>> &matriz)
-{
-	state casillaMasCercana = st; // Inicializamos con la posición dada
-	/*double distanciaMinima = std::numeric_limits<double>::max(); // Inicializamos con un valor grande
 
-	for (int i = 0; i < filas; ++i)
-	{
-		for (int j = 0; j < columnas; ++j)
-		{
-			if (matriz[i][j] == 0)
-			{												   // Si la casilla tiene valor 0
-				double dist = distancia(st.fil, st.col, i, j); // Calculamos la distancia
-				if (dist < distanciaMinima)
-				{							   // Si la distancia es menor que la mínima actual
-					distanciaMinima = dist;	   // Actualizamos la distancia mínima
-					casillaMasCercana.fil = i; // Actualizamos la fila de la casilla más cercana
-					casillaMasCercana.col = j; // Actualizamos la columna de la casilla más cercana
-				}
-			}
-		}
-	}
-	distancia_casilla = distanciaMinima;*/
-	return casillaMasCercana;
-}
-double distancia(int x1, int y1, int x2, int y2)
-{
-	return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-}
+// Funcion Casilla con menos ciclos en terrenovista

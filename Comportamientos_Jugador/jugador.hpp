@@ -78,8 +78,6 @@ public:
   Action HayEntidadesEnVista(Sensores sensor);
   Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
   Action SeguirMuro(Sensores sensor);
-  state CasillaDesconocidaMasCercana(state st, vector<vector<int>> &matriz);
-  double distancia(int x1, int y1, int x2, int y2);
 
 private:
   // Declarar aquí las variables de estado
