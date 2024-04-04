@@ -156,6 +156,8 @@ Action ComportamientoJugador::think(Sensores sensores)
 		last_action = actIDLE;
 		current_state.col = 99;
 		current_state.fil = 99;
+		if (sensores.nivel != 0 and sensores.nivel != 3)
+			current_state.brujula = norte;
 		tengo_bikini = false;
 		tengo_zapatilllas = false;
 		if (sensores.nivel != 0)
@@ -176,6 +178,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		ini_este = este;
 		ini_oeste = oeste;
 		ini_sur = sur;
+		// Preguntar si hay q hacer algo con brújula
 	}
 
 	if (sensores.nivel == 0)
@@ -1330,9 +1333,13 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 
 		cout << endl;
 	}
+	cout << situado << " " << ini_norte << " " << ini_este << " " << ini_sur << " " << ini_oeste << endl;
 	int fila_aux = fil_pos, col_aux = col_pos;
+	cout << fil_pos << " " << col_pos << endl;
+	cout << "Fila: " << fila << " Columna: " << columna << endl;
 	if (situado == ini_norte)
 	{
+		cout << "Norte" << endl;
 		for (int i = 0; i < matriz_pequeña.size(); ++i)
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
@@ -1341,7 +1348,6 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
-					cout << matriz_pequeña[i][j] << " ";
 				}
 			}
 			cout << endl;
