@@ -1349,14 +1349,14 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 					cout << i + (fil_pos - fila) << " " << j + (col_pos - columna) << endl;
 					cout << matriz_pequeña[i][j] << " " << matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] << endl;
 				}
-				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
+				if (matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
 					cout << matriz_pequeña[i][j] << " " << endl;
 				}
 			}
-		}
+		} // matriz_pequeña[i][j] == '?' and
 		for (int i = 0; i < matriz_grande.size(); ++i)
 		{
 			for (int j = 0; j < matriz_grande[0].size(); ++j)
