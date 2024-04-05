@@ -1325,14 +1325,14 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado)
 {
 
-	for (int i = 0; i < matriz_grande.size(); ++i)
+	/*for (int i = 0; i < matriz_grande.size(); ++i)
 	{
 		for (int j = 0; j < matriz_grande[0].size(); ++j)
 			if (matriz_grande[i][j] != '?')
 				cout << matriz_grande[i][j] << " ";
 
 		cout << endl;
-	}
+	}*/
 	cout << situado << " " << ini_norte << " " << ini_este << " " << ini_sur << " " << ini_oeste << endl;
 	int fila_aux = fil_pos, col_aux = col_pos;
 	cout << fil_pos << " " << col_pos << endl;
@@ -1344,13 +1344,18 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
+				if (matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
+				{
+					cout << i + (fil_pos - fila) << " " << j + (col_pos - columna) << endl;
+					cout << matriz_pequeña[i][j] << " " << matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] << endl;
+				}
 				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
+					cout << matriz_pequeña[i][j] << " " << endl;
 				}
 			}
-			cout << endl;
 		}
 		for (int i = 0; i < matriz_grande.size(); ++i)
 		{
@@ -1370,6 +1375,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
+
 				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
