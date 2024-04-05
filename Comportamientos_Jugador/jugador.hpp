@@ -59,6 +59,7 @@ public:
     mapaPasos = vector<vector<int>>(200, vector<int>(200));
     // Declaración de la matriz con tamaño 200x200
     mapaNoSituado = vector<vector<unsigned char>>(200, vector<unsigned char>(200, '?'));
+    pasos = vector<int>(16, -1);
   }
 
   ComportamientoJugador(const ComportamientoJugador &comport) : Comportamiento(comport) {}
@@ -74,6 +75,7 @@ public:
   void PonerCantidadEnAuxiliar(const state &current_state, vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
   void PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado);
   void girar_matriz_derecha(vector<vector<unsigned char>> &matriz);
+  void ponerpasosenvector(vector<int> &terreno, const state &st, const vector<vector<int>> &matriz, Orientacion pos, Sensores sensor);
   Action movimientoGeneral(Sensores sensor, state current_state);
   Action HayEntidadesEnVista(Sensores sensor);
   Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
@@ -126,5 +128,6 @@ private:
   Orientacion ini_oeste;
   vector<vector<int>> mapaPasos;
   vector<vector<unsigned char>> mapaNoSituado;
+  vector<int> pasos;
 };
 #endif
