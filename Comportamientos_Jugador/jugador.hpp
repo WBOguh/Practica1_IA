@@ -58,7 +58,7 @@ public:
     columnas = mapaResultado[0].size();
     mapaPasos = vector<vector<int>>(200, vector<int>(200));
     // Declaración de la matriz con tamaño 200x200
-    mapaNoSituado = vector<vector<unsigned char>>(200, vector<unsigned char>(200, 0));
+    mapaNoSituado = vector<vector<unsigned char>>(200, vector<unsigned char>(200, '?'));
   }
 
   ComportamientoJugador(const ComportamientoJugador &comport) : Comportamiento(comport) {}

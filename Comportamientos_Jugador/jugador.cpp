@@ -178,7 +178,6 @@ Action ComportamientoJugador::think(Sensores sensores)
 		ini_este = este;
 		ini_oeste = oeste;
 		ini_sur = sur;
-		// Preguntar si hay q hacer algo con brújula
 	}
 
 	if (sensores.nivel == 0)
@@ -1344,11 +1343,6 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
-				{
-					cout << i + (fil_pos - fila) << " " << j + (col_pos - columna) << endl;
-					cout << matriz_pequeña[i][j] << " " << matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] << endl;
-				}
 				if (matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
