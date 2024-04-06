@@ -60,6 +60,7 @@ public:
     // Declaración de la matriz con tamaño 200x200
     mapaNoSituado = vector<vector<unsigned char>>(200, vector<unsigned char>(200, '?'));
     pasos = vector<int>(16, -1);
+    obstaculos = false;
   }
 
   ComportamientoJugador(const ComportamientoJugador &comport) : Comportamiento(comport) {}
@@ -80,6 +81,7 @@ public:
   Action HayEntidadesEnVista(Sensores sensor);
   Action Atrapado(const vector<unsigned char> &terreno, Sensores sensor);
   Action SeguirMuro(Sensores sensor);
+  int BuscarCasillaMenosVista(vector<int> &terreno, int ini, int fin);
 
 private:
   // Declarar aquí las variables de estado
@@ -99,6 +101,7 @@ private:
   bool tengo_bikini;
   bool hay_algo;
   bool busco_bateria;
+  bool obstaculos;
   bool imposible;
   int filas;
   int columnas;

@@ -1,6 +1,7 @@
 #include "../Comportamientos_Jugador/jugador.hpp"
 #include <iostream>
 #include <cmath>
+#include <limits>
 
 using namespace std;
 
@@ -225,12 +226,51 @@ Action ComportamientoJugador::think(Sensores sensores)
 		accion = IrCasillaEnVista(pos, sensores.terreno, sensores);
 		cout << "Casilla en vista dirigiendose" << endl;
 	}
+	else if (bien_situado)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			if (sensores.terreno[i] == 'M' or sensores.terreno[i] == 'P')
+				obstaculos = true;
+		}
+		pos = BuscarCasillaMenosVista(pasos, 1, 15);
+		accion = HayEntidadesEnVista(sensores);
+		if (accion == actIDLE)
+		{
+			if (!obstaculos)
+				accion = IrCasillaEnVista(pos, sensores.terreno, sensores);
+			if (imposible)
+				accion = movimientoGeneral(sensores, current_state);
+			else if (accion == actWALK and sensores.terreno[2] == 'B' and !tengo_zapatilllas)
+				accion = movimientoGeneral(sensores, current_state);
+			else if (accion == actWALK and sensores.terreno[2] == 'A' and !tengo_bikini)
+				accion = movimientoGeneral(sensores, current_state);
+			else if (obstaculos)
+				accion = movimientoGeneral(sensores, current_state);
+		}
+		obstaculos = false;
+	}
 	else
 	{
 		cout << "Movimiento general" << endl;
 		accion = movimientoGeneral(sensores, current_state);
 	}
-
+	/*
+	if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
+			{
+				accion = actWALK;
+			}
+			else if (!girar_derecha)
+			{
+				accion = actTURN_L;
+				girar_derecha = (rand() % 2 == 0);
+			}
+			else
+			{
+				accion = actTURN_SR;
+				girar_derecha = (rand() % 2 == 0);
+			}
+	*/
 	if (imposible)
 		accion = movimientoGeneral(sensores, current_state);
 	if (busco_bateria and sensores.terreno[0] == 'X')
@@ -1447,91 +1487,73 @@ Action ComportamientoJugador::movimientoGeneral(Sensores sensor, state current_s
 	Action accion = actIDLE;
 	int next_pos = -1;
 
-	if (sensor.nivel != 3)
+	accion = HayEntidadesEnVista(sensor);
+	if (accion == actIDLE)
 	{
-		if (bien_situado)
+		if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
 		{
-			if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
-			{
-				accion = actWALK;
-			}
-			else if (!girar_derecha)
-			{
-				accion = actTURN_L;
-				girar_derecha = (rand() % 2 == 0);
-			}
-			else
+			accion = actWALK;
+			if (sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.terreno[7] == 'M' and (sensor.terreno[13] == 'M' or sensor.terreno[13] == 'P'))
 			{
 				accion = actTURN_SR;
-				girar_derecha = (rand() % 2 == 0);
 			}
-			/*
-			accion = HayEntidadesEnVista(sensor);
-			if (accion == actIDLE)
+			cout << "Nada delante o salida muro" << endl;
+		}
+		else if ((sensor.terreno[0] == 'A' and !tengo_bikini) or (sensor.terreno[0] == 'B' and !tengo_zapatilllas))
+		{
+			accion = Atrapado(sensor.terreno, sensor);
+			cout << "Atrapado" << endl;
+		}
+		else if (sensor.terreno[2] == 'M' or sensor.terreno[1] == 'M' or sensor.terreno[3] == 'M' or sensor.terreno[5] == 'M' or sensor.terreno[7] == 'M')
+		{
+			accion = SeguirMuro(sensor);
+			cout << "Muro" << endl;
+		}
+		else if (sensor.terreno[2] == 'P')
+		{
+			accion = actTURN_L;
+			if (rand() % 2 == 0)
 			{
-				if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' or sensor.terreno[2] == 'K' or sensor.terreno[2] == 'D' or sensor.terreno[2] == 'X')
-					accion = actWALK;
+				accion = actTURN_SR;
+				girar_derecha = true;
 			}
-			*/
+			cout << "Precipicio" << endl;
+		}
+		else if (sensor.terreno[2] == 'A' and !tengo_bikini)
+		{
+			accion = Atrapado(sensor.terreno, sensor);
+			cout << "Atrapado enfrente agua" << endl;
+		}
+		else if (sensor.terreno[2] == 'B' and !tengo_zapatilllas)
+		{
+			accion = Atrapado(sensor.terreno, sensor);
+			cout << "Atrapado enfrente bosque" << endl;
 		}
 		else
 		{
-			accion = HayEntidadesEnVista(sensor);
-			if (accion == actIDLE)
-			{
-				if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
-				{
-					accion = actWALK;
-					if (sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.terreno[7] == 'M' and (sensor.terreno[13] == 'M' or sensor.terreno[13] == 'P'))
-					{
-						accion = actTURN_SR;
-					}
-					cout << "Nada delante o salida muro" << endl;
-				}
-				else if ((sensor.terreno[0] == 'A' and !tengo_bikini) or (sensor.terreno[0] == 'B' and !tengo_zapatilllas))
-				{
-					accion = Atrapado(sensor.terreno, sensor);
-					cout << "Atrapado" << endl;
-				}
-				else if (sensor.terreno[2] == 'M' or sensor.terreno[1] == 'M' or sensor.terreno[3] == 'M' or sensor.terreno[5] == 'M' or sensor.terreno[7] == 'M')
-				{
-					accion = SeguirMuro(sensor);
-					cout << "Muro" << endl;
-				}
-				else if (sensor.terreno[2] == 'P')
-				{
-					accion = actTURN_L;
-					cout << "Precipicio" << endl;
-				}
-				else if (sensor.terreno[2] == 'A' and !tengo_bikini)
-				{
-					accion = Atrapado(sensor.terreno, sensor);
-					cout << "Atrapado enfrente agua" << endl;
-				}
-				else if (sensor.terreno[2] == 'B' and !tengo_zapatilllas)
-				{
-					accion = Atrapado(sensor.terreno, sensor);
-					cout << "Atrapado enfrente bosque" << endl;
-				}
-				else
-				{
-					accion = actWALK;
-					cout << "Andar" << endl;
-				}
-				if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
-					if (rand() % 2 == 0)
-						accion = actTURN_L;
-				if (cont_pasos >= 10 and accion == actWALK)
-				{
-					if (rand() % 4 == 0)
-						accion = actTURN_L;
-					else if (rand() % 4 == 0)
-						accion = actTURN_SR;
-				}
-				if (accion == actWALK)
-					cont_pasos++;
-			}
+			accion = actWALK;
+			cout << "Andar" << endl;
 		}
+		if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
+			if (rand() % 2 == 0)
+				accion = actTURN_L;
+		if (cont_pasos >= 10 and accion == actWALK)
+		{
+			if (rand() % 4 == 0)
+				accion = actTURN_L;
+			else if (rand() % 4 == 0)
+				accion = actTURN_SR;
+		}
+		if (accion == actWALK)
+		{
+			if (rand() % 10 == 0)
+				accion = actTURN_L;
+			else if (rand() % 10 == 0)
+				accion = actTURN_SR;
+		}
+
+		if (accion == actWALK)
+			cont_pasos++;
 	}
 	return accion;
 }
@@ -1579,12 +1601,12 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 		{
 			if (terreno[0] == 'A')
 			{
-				if (terreno[i] != 'A' and terreno[i] != 'P' and terreno[i] != 'M')
+				if (terreno[i] != 'A' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != '?')
 					pos = i;
 			}
 			else
 			{
-				if (terreno[i] != 'B' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != 'A')
+				if (terreno[i] != 'B' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != 'A' and terreno[i] != '?')
 					pos = i;
 			}
 		}
@@ -1607,38 +1629,43 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 Action ComportamientoJugador::SeguirMuro(Sensores sensor)
 {
 	Action accion;
-	if (!bien_situado)
+	if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P'))
 	{
-		if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P'))
-			accion = actTURN_L;
-		else if (sensor.terreno[1] == 'M' and (sensor.terreno[2] != 'P' and sensor.terreno[2] != 'M') and sensor.terreno[3] == 'M' and sensor.agentes[2] == '_')
-			accion = actWALK;
-		else if (sensor.terreno[7] == 'M' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P')
-			accion = actTURN_SR;
-		else if (sensor.terreno[5] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P')
-			accion = actTURN_L;
-		else if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.agentes[3] == '_')
-			accion = actTURN_SR;
-		else if (sensor.terreno[3] == 'M' and sensor.terreno[2] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P' and sensor.agentes[1] == '_')
-			accion = actTURN_L;
-		else if (((sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P') or (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P')) and (sensor.terreno[2] != 'M' or sensor.terreno[1] != 'P' and sensor.agentes[2] == '_'))
-			accion = actWALK;
-		else if (sensor.terreno[2] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P')
-		{
-			if (sensor.agentes[3] == '_')
-				accion = actTURN_SR;
-			else
-				accion = actTURN_L;
-		}
-		else if (sensor.terreno[3] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P'))
+		accion = actTURN_L;
+
+		if (rand() % 3 == 0)
 		{
 			accion = actTURN_SR;
 			girar_derecha = true;
 		}
 	}
+	else if (sensor.terreno[1] == 'M' and (sensor.terreno[2] != 'P' and sensor.terreno[2] != 'M') and sensor.terreno[3] == 'M' and sensor.agentes[2] == '_')
+		accion = actWALK;
+	else if (sensor.terreno[7] == 'M' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P')
+		accion = actTURN_SR;
+	else if (sensor.terreno[5] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P')
+		accion = actTURN_L;
+	else if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P' and sensor.agentes[3] == '_')
+		accion = actTURN_SR;
+	else if (sensor.terreno[3] == 'M' and sensor.terreno[2] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P' and sensor.agentes[1] == '_')
+		accion = actTURN_L;
+	else if (((sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P') or (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P')) and (sensor.terreno[2] != 'M' or sensor.terreno[1] != 'P' and sensor.agentes[2] == '_'))
+		accion = actWALK;
+	else if (sensor.terreno[2] == 'M' and sensor.terreno[1] != 'M' and sensor.terreno[1] != 'P' and sensor.terreno[3] != 'M' and sensor.terreno[3] != 'P')
+	{
+		if (sensor.agentes[3] == '_')
+			accion = actTURN_SR;
+		else
+			accion = actTURN_L;
+	}
+	else if (sensor.terreno[3] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P'))
+	{
+		accion = actTURN_SR;
+		girar_derecha = true;
+	}
 	return accion;
 }
-void ponerpasosenvector(vector<int> &terreno, const state &st, const vector<vector<int>> &matriz, Orientacion pos, Sensores sensor)
+void ComportamientoJugador::ponerpasosenvector(vector<int> &terreno, const state &st, const vector<vector<int>> &matriz, Orientacion pos, Sensores sensor)
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
 	{
@@ -1913,4 +1940,17 @@ void ponerpasosenvector(vector<int> &terreno, const state &st, const vector<vect
 		}
 	}
 }
-// Funcion Casilla con menos ciclos en terrenovista
+int ComportamientoJugador::BuscarCasillaMenosVista(vector<int> &terreno, int ini, int fin)
+{
+	int pos = 99;
+	int min = 99;
+	for (int i = ini; i <= fin; i++)
+	{
+		if (terreno[i] < min and terreno[i] > -1)
+		{
+			min = terreno[i];
+			pos = i;
+		}
+	}
+	return pos;
+}
