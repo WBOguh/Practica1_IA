@@ -214,6 +214,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 
 	if (bien_situado)
 	{
+		ponerpasosenvector(pasos, current_state, mapaPasos, current_state.brujula, sensores);
 		PonerTerrenoMatriz(sensores.terreno, current_state, mapaResultado, current_state.brujula, sensores);
 		PonerCantidadEnAuxiliar(current_state, mapaPasos, current_state.brujula, sensores);
 	}
@@ -236,7 +237,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 	{
 		accion = actIDLE;
 	}
-	if (girar_derecha)
+	if (last_action == actTURN_SR && girar_derecha)
 	{
 		accion = actTURN_SR;
 		girar_derecha = false;
