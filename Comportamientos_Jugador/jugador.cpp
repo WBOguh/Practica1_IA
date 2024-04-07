@@ -146,7 +146,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		cont_giros++;
 	else if (last_action == actTURN_SR)
 		cont_giros = 0;
-	if (last_action != actWALK)
+	if (last_action == actWALK)
 		cont_pasos = 0;
 	if (sensores.bateria < 3000)
 		busco_bateria = true;
@@ -201,7 +201,8 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.brujula = sensores.sentido;
 		bien_situado = true;
 		cout << "Bien posicionado" << endl;
-		PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
+		if (sensores.nivel != 3)
+			PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
 	}
 	else if (sensores.terreno[0] == 'B' and !tengo_bikini)
 		tengo_bikini = true;
@@ -237,6 +238,14 @@ Action ComportamientoJugador::think(Sensores sensores)
 		accion = HayEntidadesEnVista(sensores);
 		if (accion == actIDLE)
 		{
+			if (obstaculos)
+			{
+				if (sensores.terreno[1] != 'M' and sensores.terreno[1] != 'P' and sensores.terreno[2] != 'M' and sensores.terreno[2] != 'P' and sensores.terreno[3] != 'M' and sensores.terreno[3] != 'P')
+				{
+					pos = BuscarCasillaMenosVista(pasos, 1, 3);
+					obstaculos = false;
+				}
+			}
 			if (!obstaculos)
 				accion = IrCasillaEnVista(pos, sensores.terreno, sensores);
 			if (imposible)
@@ -252,25 +261,8 @@ Action ComportamientoJugador::think(Sensores sensores)
 	}
 	else
 	{
-		cout << "Movimiento general" << endl;
 		accion = movimientoGeneral(sensores, current_state);
 	}
-	/*
-	if (sensor.terreno[2] == 'T' or sensor.terreno[2] == 'S' or sensor.terreno[2] == 'G' and sensor.agentes[2] == '_')
-			{
-				accion = actWALK;
-			}
-			else if (!girar_derecha)
-			{
-				accion = actTURN_L;
-				girar_derecha = (rand() % 2 == 0);
-			}
-			else
-			{
-				accion = actTURN_SR;
-				girar_derecha = (rand() % 2 == 0);
-			}
-	*/
 	if (imposible)
 		accion = movimientoGeneral(sensores, current_state);
 	if (busco_bateria and sensores.terreno[0] == 'X')
@@ -1375,7 +1367,7 @@ void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<uns
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
 			{
-				if (matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
+				if (matriz_pequeña[i][j] == '?' and matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)] != '?')
 				{
 					matriz_pequeña[i][j] = matriz_grande[i + (fil_pos - fila)][j + (col_pos - columna)];
 					mapaPasos[i][j]++;
@@ -1601,12 +1593,12 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 		{
 			if (terreno[0] == 'A')
 			{
-				if (terreno[i] != 'A' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != '?')
+				if (terreno[i] != 'A' and terreno[i] != 'P' and terreno[i] != 'M')
 					pos = i;
 			}
 			else
 			{
-				if (terreno[i] != 'B' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != 'A' and terreno[i] != '?')
+				if (terreno[i] != 'B' and terreno[i] != 'P' and terreno[i] != 'M' and terreno[i] != 'A')
 					pos = i;
 			}
 		}
@@ -1615,7 +1607,15 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 	if (pos != 99)
 		accion = IrCasillaEnVista(pos, terreno, sensor);
 	if (imposible)
+	{
 		accion = actTURN_L;
+
+		if (rand() % 3 == 0)
+		{
+			accion = actTURN_SR;
+			girar_derecha = true;
+		}
+	}
 	else if (cont_giros >= 4)
 		if (terreno[2] != 'P' and terreno[2] != 'M')
 			accion = actWALK;
@@ -1629,7 +1629,7 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 Action ComportamientoJugador::SeguirMuro(Sensores sensor)
 {
 	Action accion;
-	if (sensor.terreno[1] == 'M' and sensor.terreno[2] == 'M' and (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P'))
+	if ((sensor.terreno[1] == 'M' or sensor.terreno[1] == 'P') and sensor.terreno[2] == 'M' and (sensor.terreno[3] == 'M' or sensor.terreno[3] == 'P'))
 	{
 		accion = actTURN_L;
 
