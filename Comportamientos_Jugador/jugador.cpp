@@ -250,8 +250,8 @@ Action ComportamientoJugador::think(Sensores sensores)
 				accion = IrCasillaEnVista(pos, sensores.terreno, sensores);
 			if (imposible)
 				accion = movimientoGeneral(sensores, current_state);
-			else if (accion == actWALK and sensores.terreno[2] == 'B' and !tengo_zapatilllas)
-				accion = movimientoGeneral(sensores, current_state);
+			/*else if (accion == actWALK and sensores.terreno[2] == 'B' and !tengo_zapatilllas)
+				accion = movimientoGeneral(sensores, current_state);*/
 			else if (accion == actWALK and sensores.terreno[2] == 'A' and !tengo_bikini)
 				accion = movimientoGeneral(sensores, current_state);
 			else if (obstaculos)
