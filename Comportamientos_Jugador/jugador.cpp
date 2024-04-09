@@ -10,7 +10,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 
 	Action accion = actIDLE;
 
-	// Mostrar el valor de los sensores
+	/*// Mostrar el valor de los sensores
 	cout << "Posicion: fila " << sensores.posF << " columna " << sensores.posC;
 	switch (sensores.sentido)
 	{
@@ -51,7 +51,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 	cout << "  Reset: " << sensores.reset;
 	cout << "  Vida: " << sensores.vida << endl
 		 << endl;
-
+*/
 	// Pintamos Acantilados
 	PintarPrecicpicios(primera_vez);
 
@@ -200,7 +200,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 		current_state.col = sensores.posC;
 		current_state.brujula = sensores.sentido;
 		bien_situado = true;
-		cout << "Bien posicionado" << endl;
+		// cout << "Bien posicionado" << endl;
 		if (sensores.nivel != 3)
 			PonValoresNoPosicionadoAVerdaderos(mapaResultado, mapaNoSituado, current_state.fil, current_state.col, sensores, current_state.brujula);
 	}
@@ -222,10 +222,10 @@ Action ComportamientoJugador::think(Sensores sensores)
 	}
 	pos = HayCasilaEspecialNecesariaEnVista(sensores.terreno, sensores);
 
-	if (hay_algo and pos != 0)
+	if (hay_algo and pos != 0 and sensores.terreno[1] != 'M' and sensores.terreno[1] != 'P' and sensores.terreno[2] != 'M' and sensores.terreno[2] != 'P' and sensores.terreno[3] != 'M' and sensores.terreno[3] != 'P')
 	{
 		accion = IrCasillaEnVista(pos, sensores.terreno, sensores);
-		cout << "Casilla en vista dirigiendose" << endl;
+		// cout << "Casilla en vista dirigiendose" << endl;
 	}
 	else if (bien_situado)
 	{
@@ -363,7 +363,7 @@ int ComportamientoJugador::HayCasilaEspecialNecesariaEnVista(const vector<unsign
 		pos = -1;
 		hay_algo = false;
 	}
-	cout << "Posicion: " << pos << endl;
+	// cout << "Posicion: " << pos << endl;
 	return pos;
 }
 Action ComportamientoJugador::IrCasillaEnVista(int pos, const vector<unsigned char> &terreno, Sensores sensor)
@@ -423,7 +423,7 @@ void ComportamientoJugador::PonerTerrenoMatriz(const vector<unsigned char> &terr
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
 	{
-		cout << "Error: Índices fuera de los límites de la matriz." << endl;
+		// cout << "Error: Índices fuera de los límites de la matriz." << endl;
 		return;
 	}
 	matriz[st.fil][st.col] = terreno[0];
@@ -698,7 +698,7 @@ void ComportamientoJugador::PonerCantidadEnAuxiliar(const state &st, vector<vect
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
 	{
-		cout << "Error: Índices fuera de los límites de la matriz." << endl;
+		// cout << "Error: Índices fuera de los límites de la matriz." << endl;
 		return;
 	}
 	matriz[st.fil][st.col] += 1;
@@ -1080,13 +1080,13 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 
 	if (fil < 0 || fil >= matriz.size() || col < 0 || col >= matriz[0].size())
 	{
-		cout << "Error: Índices fuera de los límites de la matriz." << endl;
+		// cout << "Error: Índices fuera de los límites de la matriz." << endl;
 		return;
 	}
 	matriz[fil][col] = terreno[0];
 	fil_pos = fil;
 	col_pos = col;
-	cout << "Escribiendo en matriz auxiliar a partir de:" << fil << " " << col << " " << terreno[0] << endl;
+	// cout << "Escribiendo en matriz auxiliar a partir de:" << fil << " " << col << " " << terreno[0] << endl;
 	if (sensor.nivel != 3)
 	{
 		switch (ini_norte)
@@ -1356,13 +1356,13 @@ void ComportamientoJugador::PonerTerrenoMatrizNoSituado(const vector<unsigned ch
 }
 void ComportamientoJugador::PonValoresNoPosicionadoAVerdaderos(vector<vector<unsigned char>> &matriz_pequeña, vector<vector<unsigned char>> &matriz_grande, int fila, int columna, Sensores sensor, Orientacion situado)
 {
-	cout << situado << " " << ini_norte << " " << ini_este << " " << ini_sur << " " << ini_oeste << endl;
+	// cout << situado << " " << ini_norte << " " << ini_este << " " << ini_sur << " " << ini_oeste << endl;
 	int fila_aux = fil_pos, col_aux = col_pos;
-	cout << fil_pos << " " << col_pos << endl;
-	cout << "Fila: " << fila << " Columna: " << columna << endl;
+	// cout << fil_pos << " " << col_pos << endl;
+	// cout << "Fila: " << fila << " Columna: " << columna << endl;
 	if (situado == ini_norte)
 	{
-		cout << "Norte" << endl;
+		// cout << "Norte" << endl;
 		for (int i = 0; i < matriz_pequeña.size(); ++i)
 		{
 			for (int j = 0; j < matriz_pequeña[0].size(); ++j)
@@ -1489,17 +1489,17 @@ Action ComportamientoJugador::movimientoGeneral(Sensores sensor, state current_s
 			{
 				accion = actTURN_SR;
 			}
-			cout << "Nada delante o salida muro" << endl;
+			// cout << "Nada delante o salida muro" << endl;
 		}
 		else if ((sensor.terreno[0] == 'A' and !tengo_bikini) or (sensor.terreno[0] == 'B' and !tengo_zapatilllas))
 		{
 			accion = Atrapado(sensor.terreno, sensor);
-			cout << "Atrapado" << endl;
+			// cout << "Atrapado" << endl;
 		}
 		else if (sensor.terreno[2] == 'M' or sensor.terreno[1] == 'M' or sensor.terreno[3] == 'M' or sensor.terreno[5] == 'M' or sensor.terreno[7] == 'M')
 		{
 			accion = SeguirMuro(sensor);
-			cout << "Muro" << endl;
+			// cout << "Muro" << endl;
 		}
 		else if (sensor.terreno[2] == 'P')
 		{
@@ -1509,22 +1509,22 @@ Action ComportamientoJugador::movimientoGeneral(Sensores sensor, state current_s
 				accion = actTURN_SR;
 				girar_derecha = true;
 			}
-			cout << "Precipicio" << endl;
+			// cout << "Precipicio" << endl;
 		}
 		else if (sensor.terreno[2] == 'A' and !tengo_bikini)
 		{
 			accion = Atrapado(sensor.terreno, sensor);
-			cout << "Atrapado enfrente agua" << endl;
+			// cout << "Atrapado enfrente agua" << endl;
 		}
 		else if (sensor.terreno[2] == 'B' and !tengo_zapatilllas)
 		{
 			accion = Atrapado(sensor.terreno, sensor);
-			cout << "Atrapado enfrente bosque" << endl;
+			// cout << "Atrapado enfrente bosque" << endl;
 		}
 		else
 		{
 			accion = actWALK;
-			cout << "Andar" << endl;
+			// cout << "Andar" << endl;
 		}
 		if ((cont_pasos > mapaResultado.size() / 3) and accion == actWALK)
 			if (rand() % 2 == 0)
@@ -1603,7 +1603,7 @@ Action ComportamientoJugador::Atrapado(const vector<unsigned char> &terreno, Sen
 			}
 		}
 	}
-	cout << pos << endl;
+	// cout << pos << endl;
 	if (pos != 99)
 		accion = IrCasillaEnVista(pos, terreno, sensor);
 	if (imposible)
@@ -1669,7 +1669,7 @@ void ComportamientoJugador::ponerpasosenvector(vector<int> &terreno, const state
 {
 	if (st.fil < 0 || st.fil >= matriz.size() || st.col < 0 || st.col >= matriz[0].size())
 	{
-		cout << "Error: Índices fuera de los límites de la matriz." << endl;
+		// cout << "Error: Índices fuera de los límites de la matriz." << endl;
 		return;
 	}
 	terreno[0] = matriz[st.fil][st.col];
